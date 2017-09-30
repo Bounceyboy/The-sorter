@@ -3,7 +3,7 @@
 #include<stdio.h>
 #include"sorter.h"
 #include <time.h>
-//#include"Mergesort.c"
+#include"mergesort.c"
 
 int main(int argc, char *argv[]){
 
