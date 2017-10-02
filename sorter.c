@@ -11,7 +11,7 @@ int main(int argc, char *argv[]){
 
 	FILE *input;
 	input = stdin;				//the File "input" is now the csv
-//	input = fopen("movie_metadata.csv", "r"); 		//for debugging
+	input = fopen("movie_metadata.csv", "r"); 		//for debugging
 
 	Line **Lines = malloc(sizeof(Line));
 	char buf[1024];
@@ -31,14 +31,25 @@ int main(int argc, char *argv[]){
 	//increment ArraySize (might remove, just figured it'd be good to have just in case)
 	//Reallocate memory to allow for an additional Line in "Lines"
 	//Call importLine to create that line and add it to "Lines"
-	
-	while(fgets(buf,1024,input)!=NULL){	//for each line (gets stored in string "buf")
+
+	while(ArraySize < 200)/*fgets(buf,1024,input)!=NULL*/{	//for each line (gets stored in string "buf")
+		printf("%d\n", ArraySize);
+		fgets(buf,1024,input);
 		ArraySize++;
 		Lines = realloc(Lines, sizeof(Lines) + sizeof(Line));
 		Lines[ArraySize-1] = importLine(buf);
+		
 	}
+	int count = 0;
+	while (count++ < ArraySize - 1)
+		printf("%s\t%d\n", Lines[count]->movie_title, Lines[count]->gross);
+	*Lines = Mergesort(*Lines, *argv);
+	count = 0;
+	printf("\n");
+	while (count++ < ArraySize - 1)
+		printf("%s\t%d\n", Lines[count]->movie_title, Lines[count]->gross);
 
-	printf("%d\n", ArraySize);
+	
 
 
 

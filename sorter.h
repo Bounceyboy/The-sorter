@@ -42,6 +42,9 @@ char* getNextToken(char* tokPointer, char temp[], char* tempPointer);
 Line* Mergesort(Line* movies, char* col);
 void sort(Line* movies, int n, char* col);
 void merge(Line* movies, Line* L, int l, Line* R, int r, char* col);
+int getIntElement(Line *line, char* col);
+double getDblElement(Line *line, char* col);
+char* getStrElement(Line *line, char* col);
 
 //functions
 
