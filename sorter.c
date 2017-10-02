@@ -16,7 +16,7 @@ int main(int argc, char *argv[]){
 	Line **Lines = malloc(sizeof(Line));
 	char buf[1024];
 	
-	//int ArraySize = 1;
+	int ArraySize = 1;
 
 	//one extra fgets call to skip header line of csv
 	fgets(buf,1024,input);
@@ -33,12 +33,12 @@ int main(int argc, char *argv[]){
 	//Call importLine to create that line and add it to "Lines"
 	
 	while(fgets(buf,1024,input)!=NULL){	//for each line (gets stored in string "buf")
-		//ArraySize++;
+		ArraySize++;
 		Lines = realloc(Lines, sizeof(Lines) + sizeof(Line));
 		Lines[ArraySize-1] = importLine(buf);
 	}
 
-	//printf("%d\n", ArraySize);
+	printf("%d\n", ArraySize);
 
 
 
