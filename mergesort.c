@@ -1,33 +1,27 @@
 
-Line* Mergesort(Line* movies, char* col) {
-	int i = sizeof(Line);	// length of line (1 movie) in bytes
-	int n = sizeof(movies)/i;	// number of movies in array
+void Mergesort(Line* movies, int size, char* col) {
 
-	sort(movies, n, col);
-	return movies;
-}
-
-void sort(Line* movies, int n, char* col) {
 	int mid, i;
 	Line *L, *R;
 
-	if (n < 2) return;
+	if (size < 2) return;
 
-	mid = n/2;
+	mid = size/2;
 
 	L = (Line*)malloc(mid*sizeof(Line));
-	R = (Line*)malloc((n - mid)*sizeof(Line));
+	R = (Line*)malloc((size - mid)*sizeof(Line));
 
 	for(i = 0; i < mid; i++)
 		L[i] = movies[i];
-	for(i = mid; i < n; i++)
+	for(i = mid; i < size; i++)
 		R[i - mid] = movies[i];
 
-	sort(L, mid, col);
-	sort(R, n - mid, col);
-	merge(movies, L, mid, R, n - mid, col);
+	Mergesort(L, mid, col);
+	Mergesort(R, size - mid, col);
+	merge(movies, L, mid, R, size - mid, col);
 	free(L);
 	free(R);
+
 	return;
 }
 

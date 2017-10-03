@@ -3,23 +3,52 @@
 #include<stdio.h>
 #include"sorter.h"
 #include <time.h>
-//#include"Mergesort.c"
+#include"mergesort.c"
 
 int main(int argc, char *argv[]){
-
-	//TODO: error handling for wrong file input
-
 	FILE *input;
 	input = stdin;				//the File "input" is now the csv
 //	input = fopen("movie_metadata.csv", "r"); 		//for debugging
 
+	// if (!feof(input)){
+	// 	printf("%s\n", "No data.");
+	// 	return 0;
+	// }
+
+	//error handling for wrong header input
+
+	if (!(!strcmp(argv[2], "num_critic_for_reviews") || !strcmp(argv[2], "duration")
+		|| !strcmp(argv[2], "director_facebook_likes") || !strcmp(argv[2], "actor_3_facebook_likes")
+		|| !strcmp(argv[2], "actor_1_facebook_likes") || !strcmp(argv[2], "gross") || !strcmp(argv[2], "num_voted_users")
+		|| !strcmp(argv[2], "cast_total_facebook_likes") || !strcmp(argv[2], "facenumber_in_poster")
+		|| !strcmp(argv[2], "num_user_for_reviews") || !strcmp(argv[2], "budget") || !strcmp(argv[2], "title_year")
+		|| !strcmp(argv[2], "actor_2_facebook_likes") || !strcmp(argv[2], "movie_facebook_likes")
+		|| !strcmp(argv[2], "imdb_score") || !strcmp(argv[2], "aspect_ratio")
+		|| !strcmp(argv[2], "color") || !strcmp(argv[2], "director_name")
+		|| !strcmp(argv[2], "actor_2_name") || !strcmp(argv[2], "genres") || !strcmp(argv[2], "actor_1_name")
+		|| !strcmp(argv[2], "movie_title") || !strcmp(argv[2], "actor_3_name")
+		|| !strcmp(argv[2], "plot_keywords") || !strcmp(argv[2], "movie_imdb_link") || !strcmp(argv[2], "language")
+		|| !strcmp(argv[2], "country") || !strcmp(argv[2], "content_rating"))) {
+
+		printf("%s\n", "Header does not exist.");
+		return 0;
+	}
+
+
+	
 	Line *Lines = malloc(sizeof(Line));
 	char buf[1024];
 	
 	int ArraySize = 1;
-	//char toSortBy[64];
-	//strncpy(toSortBy, argv[22], strlen(argv[3]));
+	char toSortBy[64];
+	int i;
+	for (i = 0; i < 64; ++i)
+	{
+		toSortBy[i] = 0;
+	}
+	strncpy(toSortBy, argv[2], strlen(argv[2]));
 
+	printf("%s\n", toSortBy);
 	//one extra fgets call to skip header line of csv
 	fgets(buf,1024,input);
 
@@ -51,6 +80,9 @@ int main(int argc, char *argv[]){
  *This will be in a separate file called Mergesort.c
  *Let me know if you need help!
  */
+
+	//Mergesort(Lines, ArraySize, "duration");
+	Mergesort(Lines, ArraySize, toSortBy);
 
 	int x;
 	printf("color,director_name,num_critic_for_reviews,duration,director_facebook_likes,actor_3_facebook_likes,actor_2_name,actor_1_facebook_likes,gross,genres,actor_1_name,movie_title,num_voted_users,cast_total_facebook_likes,actor_3_name,facenumber_in_poster,plot_keywords,movie_imdb_link,num_user_for_reviews,language,country,content_rating,budget,title_year,actor_2_facebook_likes,imdb_score,aspect_ratio,movie_facebook_likes\n");
