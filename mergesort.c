@@ -93,6 +93,9 @@ int getIntElement(Line *line, char* col) {
 		return line -> actor_2_facebook_likes;
 	else if (!strcmp(col, "movie_facebook_likes"))
 		return line -> movie_facebook_likes;
+	else
+		return 0;
+
 
 }
 
@@ -101,6 +104,8 @@ double getDblElement(Line *line, char* col) {
 		return line -> imdb_score;
 	else if (!strcmp(col, "aspect_ratio"))
 		return line -> aspect_ratio;
+	else
+		return 0.0;
 }
 
 char* getStrElement(Line *line, char* col) { 	
@@ -128,4 +133,6 @@ char* getStrElement(Line *line, char* col) {
 		return line -> country;
 	else if (!strcmp(col, "content_rating"))
 		return line -> content_rating;
+	else
+		return "";
 	}
