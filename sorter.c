@@ -2,8 +2,10 @@
 #include<string.h>
 #include<stdio.h>
 #include"sorter.h"
-#include <time.h>
+#include<time.h>
 #include"mergesort.c"
+#include<dirent.h>
+#include"csvsearch.c"
 
 int main(int argc, char *argv[]) {
 	FILE *input;
@@ -16,6 +18,14 @@ int main(int argc, char *argv[]) {
 	// }
 
 	//error handling for wrong header input
+
+	csvSearch(".");
+
+	return 0;
+
+	//rest of code below this will work, just remove the return 0 above, put it there
+	//to make it easier to test my code for your purposes @baseballguy69
+
 
 	if (!(!strcmp(argv[2], "num_critic_for_reviews") || !strcmp(argv[2], "duration")
 		|| !strcmp(argv[2], "director_facebook_likes") || !strcmp(argv[2], "actor_3_facebook_likes")
@@ -68,18 +78,6 @@ int main(int argc, char *argv[]) {
 		Lines = realloc(Lines, (ArraySize*sizeof(Line)));
 		Lines[ArraySize-1] = *importLine(buf);
 	}
-
-
-/*TODO mergesort function with following properties
- *Takes a "Lines" input (pointer to array of "Line" structs), and a string (character array) containing
- *the title of the column to sort by
- *
- *a prototype of the function would look like this:
- *	Line* Mergesort(Line* inputArray, char* column);
- *
- *This will be in a separate file called Mergesort.c
- *Let me know if you need help!
- */
 
 	//Mergesort(Lines, ArraySize, "duration");
 	Mergesort(Lines, ArraySize, toSortBy);
