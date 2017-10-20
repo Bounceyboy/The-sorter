@@ -17,9 +17,60 @@ int main(int argc, char *argv[]) {
 	// 	return 0;
 	// }
 
-	//error handling for wrong header input
+	//error handling for wrong header input still needed?
 
-	csvSearch(".");
+	//user input handling
+	char* output = NULL;	
+	char* path = NULL;
+
+	if(argc>3){
+		if(strcmp(argv[3],"-d") == 0){
+			if(argc>4){
+				if(strcmp(argv[4],"-o") != 0){
+					path = (char*)malloc((sizeof(char)*strlen(argv[4]) + 12));
+					strcpy(path, "./");
+					strcat(path, argv[4]);
+				}
+				if(argc>5){
+					if(strcmp(argv[4], "-o")== 0){
+						output = (char*)malloc((sizeof(char)*strlen(argv[5]) + 12));
+						strcpy(output, "./");
+						strcat(output, argv[5]);
+					}
+					else if(argc>6 && strcmp(argv[5], "-o")== 0){
+						output = (char*)malloc((sizeof(char)*strlen(argv[6]) + 12));
+						strcpy(output, "./");
+						strcat(output, argv[6]);
+					}
+				}
+			}
+		}
+		if(strcmp(argv[3],"-o") == 0){
+			if(argc>4){
+				if(strcmp(argv[4],"-d") != 0){
+					output = (char*)malloc((sizeof(char)*strlen(argv[4]) + 12));
+					strcpy(output, "./");
+					strcat(output, argv[4]);
+				}
+				if(argc>5){
+					if(strcmp(argv[4],"-d") == 0){
+						path = (char*)malloc((sizeof(char)*strlen(argv[5]) + 12));
+						strcpy(path, "./");
+						strcat(path, argv[5]);
+					}
+					else if(argc>6 && strcmp(argv[5],"-d") == 0){
+						path = (char*)malloc((sizeof(char)*strlen(argv[6]) + 12));
+						strcpy(path, "./");
+						strcat(path, argv[6]);
+					}
+				}
+			}
+		}
+	}
+	if(path==NULL)
+		csvSearch(".");
+	else
+		csvSearch(path);	
 
 	return 0;
 
@@ -125,5 +176,9 @@ int main(int argc, char *argv[]) {
 	}
 
 	free(Lines);
+	if(path!=NULL)
+		free(path);
+	if(output!=NULL)
+		free(output);
 	return 0;
 }
