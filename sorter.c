@@ -3,6 +3,8 @@
 #include<stdio.h>
 #include"sorter.h"
 #include<time.h>
+#include<sys/types.h>
+#include<unistd.h>
 #include"mergesort.c"
 #include<dirent.h>
 #include"csvsearch.c"

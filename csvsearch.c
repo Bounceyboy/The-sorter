@@ -4,7 +4,9 @@ void csvSearch(char* path){
 	struct dirent* currentFile;
 	char* lastFour = "abcd";
 	int length=0;
+	int status=0;
 	char* newpath;
+	pid_t PID, child, wpid;
 
 	if (dir){
 		while((currentFile = readdir(dir)) != NULL){
@@ -15,7 +17,10 @@ void csvSearch(char* path){
 				strcpy(newpath, path);
 				strcat(newpath, "/");
 				strcat(newpath, currentFile->d_name);
-				csvSearch(newpath);
+				if((child = fork()) == 0){
+					csvSearch(newpath);
+					exit(0);
+				}
 			}
 			if(length>4){
 				lastFour = currentFile->d_name;
@@ -26,5 +31,6 @@ void csvSearch(char* path){
 		}
 		if(newpath != NULL)
 			free(newpath);
+		while((wpid = wait(&status)) > 0);
 	}
 }
