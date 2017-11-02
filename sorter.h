@@ -43,7 +43,8 @@ void merge(Line* movies, Line* L, int l, Line* R, int r, char* col);
 int getIntElement(Line *line, char* col);
 double getDblElement(Line *line, char* col);
 char* getStrElement(Line *line, char* col);
-void csvSearch(char* path);
+void csvSearch(char* path, char* outpath, char* toSortBy);
+void csvSort(char* path, char* outpath, char* toSortBy);
 
 //functions
 
