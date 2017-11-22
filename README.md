@@ -4,7 +4,10 @@
 
 # Summary
 
-This was the first assignment for my Systems Programming class, a two person assignment that just takes an input CSV and sorts based on command line inputs
+This was the second assignment for my Systems Programming class, a two person assignment that just takes an input CSV and sorts based on command line inputs
+
+
+#PROJECT 0
 
 The purpose of this assignment was to sort movie metadata given a comma separated value file.
 We chose to store each row (movie) as a struct of all its data, with all the column headers
@@ -35,3 +38,7 @@ Lines = realloc(Lines, sizeof(Lines) + sizeof(Line)) was the code used
 But this has the same exact problem.
 
 At the time we had Lines as a double pointer which just made it impossible to use the sizeof function.
+
+#PROJECT 1
+
+The purpose of this project was to use fork()ing to accomplish the same task as last time, except while traversing the filesystem.

@@ -66,7 +66,7 @@ void csvSort(char* pathToFile, char* outpath, char* column) {
 	filename = strrchr(pathToFile, '/');
 	filename++; 				//file name as "file.csv"
 	strtok(path, filename);		//path is now "./dir/somewhere/" (where file is held)
-	strtok(filename, "."); 		//file name as "file"
+	strtok(filename, ".csv"); 		//file name as "file"
 	strcat(filename, "-sorted.csv"); //"file-sorted.csv"
 
 	if (outpath == NULL){
@@ -79,7 +79,7 @@ void csvSort(char* pathToFile, char* outpath, char* column) {
 		output = fopen(outpath, "w"); //opens file in path to write to
 	}
 
-	Line *Lines = malloc(sizeof(Line*));
+	Line *Lines = malloc(sizeof(Line));
 	char buf[1024];
 	char header[1024];
 	
@@ -121,14 +121,14 @@ void csvSort(char* pathToFile, char* outpath, char* column) {
 	
 	while(fgets(buf,1024,toSort)!=NULL){	//for each line (gets stored in string "buf")
 		ArraySize++;
-		Lines = realloc(Lines, ((ArraySize + 1)*sizeof(Line*)));
+		Lines = realloc(Lines, ((ArraySize + 1)*sizeof(Line)));
 		Lines[ArraySize-1] = *importLine(buf);
 	}
 
 	Mergesort(Lines, ArraySize, toSortBy);
 
 	int x;
-	fprintf(output, "%s\n", header);
+	fprintf(output, "%s", header);
 	for(x=0;x<ArraySize;x++){
 
 		if(strcmp((&Lines[x])->color,"lack and Whitee"))
@@ -173,5 +173,4 @@ void csvSort(char* pathToFile, char* outpath, char* column) {
 	fclose(output);
 	fclose(toSort);
 	return;
-	exit(0);
 }
