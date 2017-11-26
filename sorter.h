@@ -45,6 +45,7 @@ double getDblElement(Line *line, char* col);
 char* getStrElement(Line *line, char* col);
 void csvSearch(char* path, char* outpath, char* toSortBy);
 void csvSort(char* path, char* outpath, char* toSortBy);
+int line_count(FILE *n);
 
 //functions
 

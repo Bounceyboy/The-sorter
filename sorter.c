@@ -81,6 +81,7 @@ int main(int argc, char *argv[]) {
 
 	printf("Initial PID: %d\n", getpid());
 	printf("PIDS of all child processes: ");
+	fflush(stdout);
 	
 	int fd[2];
 	pipe(fd); 	//write(fd[1], char* data, int length_of_data);
@@ -88,7 +89,7 @@ int main(int argc, char *argv[]) {
 	if(path==NULL)
 		csvSearch(".", output, argv[2]);
 	else
-		csvSearch(path, output, argv[2]);
+		csvSearch(strcat(path, "."), output, argv[2]);
 
 	fflush(stdout);
 	//printf("Total number of processes: %d\n", getpid());

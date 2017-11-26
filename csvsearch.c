@@ -2,34 +2,43 @@
 void csvSearch(char* path, char* outpath, char* toSortBy){
 	DIR * dir = opendir(path);
 	struct dirent* currentFile;
-	char* nameEnd = "abcdefghijk"; //changed to 11 chars to check "-sorted.csv"
-	int length=0;
-	int status=0;
+	char* nameEnd = "abcdefghijk"; 	//changed to 11 chars to check "-sorted.csv"
+	char* sorted = (char*)malloc(sizeof(toSortBy) + 13);
+	int nameLength = 0;	//length of filename (includes possible "-sorted-<whatever>.csv")
+	int endLength = 0;	//length of "-sorted-<whatever>.csv"
+	int status = 0;
 	char* newpath;
 	pid_t PID, child, wpid;
 
+	strcpy(sorted, "-sorted-");
+	strcat(sorted, toSortBy);
+	strcat(sorted, ".csv");
+
+	endLength = strlen(sorted);
+
 	if (dir){
 		while((currentFile = readdir(dir)) != NULL){
-			length = strlen(currentFile->d_name);
+			nameLength = strlen(currentFile->d_name);
 			if(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0);
 			else{
-				newpath = (char*)malloc((sizeof(char)*strlen(path)) + (sizeof(char)*length) + 16);
+				newpath = (char*)malloc((sizeof(char)*strlen(path)) + (sizeof(char)*nameLength) + 16);
 				strcpy(newpath, path);
 				strcat(newpath, "/");
 				strcat(newpath, currentFile->d_name);
-				if((child = fork()) == 0){
+				if((child = fork()) == 0) {
 					csvSearch(newpath, outpath, toSortBy);
 					exit(0);
 				}
 				nameEnd = currentFile->d_name;
-				if(length > 11){
-					nameEnd = nameEnd + (length - 11);
-					if (strcmp(nameEnd, "-sorted.csv") == 0)
+
+				if(nameLength > endLength){
+					nameEnd = nameEnd + (nameLength - endLength);
+					if (strcmp(nameEnd, sorted) == 0)
 						continue;
-					nameEnd = nameEnd + 11;
+					nameEnd = nameEnd + endLength;
 				}
-				if(length > 4 && length < 11)
-					nameEnd = nameEnd + (length - 4);
+				if(nameLength > 4 && nameLength < endLength)
+					nameEnd = nameEnd + (nameLength - 4);
 				else
 					nameEnd = nameEnd - 4;
 				if(strcmp(nameEnd, ".csv")==0){
@@ -45,7 +54,6 @@ void csvSearch(char* path, char* outpath, char* toSortBy){
 		while((wpid = wait(&status)) > 0){
 			printf("%d, ", wpid);
 		}
-
 		exit(0);		
 
 	}
@@ -55,31 +63,43 @@ void csvSearch(char* path, char* outpath, char* toSortBy){
 }
 
 void csvSort(char* pathToFile, char* outpath, char* column) {
+	FILE * toCount = fopen(pathToFile, "r");
 	FILE * toSort = fopen(pathToFile, "r");
-	char * filename;
+	char * filename = (char *)malloc(256 * sizeof(char));
 	char * path; 			//directory where file is stored
 	FILE * output; 			//path to -sorted file
 
-	path = (char*)malloc(sizeof(strlen(pathToFile)));
+	path = (char*)malloc(sizeof(strlen(pathToFile)) + 192);
 	strcpy(path, pathToFile); 	//path is now direct path to file
-								//(not yet just path to dir where file is held)
 	filename = strrchr(pathToFile, '/');
 	filename++; 				//file name as "file.csv"
-	strtok(path, filename);		//path is now "./dir/somewhere/" (where file is held)
-	strtok(filename, ".csv"); 		//file name as "file"
-	strcat(filename, "-sorted.csv"); //"file-sorted.csv"
+
+	int endOfPath = (strlen(path) - strlen(filename));
+	strncpy(path, path, endOfPath);
+	path[endOfPath] = '\0'; //path without filename at end
+
+	int endOfFilename = strlen(filename) - 4;
+	strncpy(filename, filename, endOfFilename);
+	filename[endOfFilename] = '\0'; //filename without .csv at the end
+
+	strcat(filename, "-sorted-");
+	strcat(filename, column);
+	strcat(filename, ".csv");
 
 	if (outpath == NULL){
 		strcat(path, filename);
 		output = fopen(path, "w");
 	} else {
 		strcat(outpath, "/"); 	//failsafe for input that doesn't add ending slash
-		mkdir(outpath, S_IRWXU);
+		mkdir(outpath, 0755);
 		strcat(outpath, filename);
 		output = fopen(outpath, "w"); //opens file in path to write to
 	}
 
-	Line *Lines = malloc(sizeof(Line));
+	int numberOfLines = line_count(toCount);
+	fclose(toCount);
+
+	Line *Lines = malloc(sizeof(Line) * (numberOfLines + 1));
 	char buf[1024];
 	char header[1024];
 	
@@ -93,19 +113,6 @@ void csvSort(char* pathToFile, char* outpath, char* column) {
 	//store header line of csv
 	fgets(buf,1024,toSort);
 
-	//printf("\n\nbuf is: %s\n\n\n", buf);
-
-	// if(buf == NULL || buf == "\0" || !isalnum(buf) || buf == "" || buf == " "){
-	// 	fprintf(output, "EMPTY FILE\n");
-	// 	fflush(output);
-	// 	fclose(output);
-	// 	exit(0);
-	// }
-	//fprintf(output, "i hate myself so much\n");
-	//fflush(output);
-	//fclose(output);
-	//exit(0);
-
 	strncpy(header, buf, strlen(buf));
 
 	//one manual fgets call to store in first line so that there isn't an extra
@@ -116,12 +123,9 @@ void csvSort(char* pathToFile, char* outpath, char* column) {
 
 	//in this loop:
 	//increment ArraySize
-	//Reallocate memory to allow for an additional Line in "Lines"
 	//Call importLine to create that line and add it to "Lines"
-	
 	while(fgets(buf,1024,toSort)!=NULL){	//for each line (gets stored in string "buf")
 		ArraySize++;
-		Lines = realloc(Lines, ((ArraySize + 1)*sizeof(Line)));
 		Lines[ArraySize-1] = *importLine(buf);
 	}
 
@@ -174,3 +178,13 @@ void csvSort(char* pathToFile, char* outpath, char* column) {
 	fclose(toSort);
 	return;
 }
+
+int line_count(FILE *n) {
+	int c; 
+	int lines = 0;
+	while ((c = fgetc(n)) != EOF) {
+		if (c == '\n')
+			++lines;
+	}
+	return lines;
+} 
