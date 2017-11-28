@@ -1,5 +1,8 @@
 #ifndef sorter_h
 #define sorter_h
+extern pthread_t * threads;
+extern int maxThread;
+extern int threadCount;
 
 //Line struct stores the data of each line of the CSV input file.
 typedef struct{					//I used typedef so we can reference just "Line" instead 
@@ -34,6 +37,12 @@ typedef struct{					//I used typedef so we can reference just "Line" instead
 	int movie_facebook_likes;	
 } Line;
 
+typedef struct {
+	char path[256];
+	char outpath[256];
+	char column[32];
+} Data;
+
 
 //prototypes
 Line* importLine (char* buf);
@@ -43,8 +52,8 @@ void merge(Line* movies, Line* L, int l, Line* R, int r, char* col);
 int getIntElement(Line *line, char* col);
 double getDblElement(Line *line, char* col);
 char* getStrElement(Line *line, char* col);
-void csvSearch(char* path, char* outpath, char* toSortBy);
-void csvSort(char* path, char* outpath, char* toSortBy);
+void *csvSearch(void * data);	//path, outpath, column
+void *csvSort(void * data);		//path, outpath, column
 int line_count(FILE *n);
 
 //functions

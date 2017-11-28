@@ -1,14 +1,21 @@
 
-void csvSearch(char* path, char* outpath, char* toSortBy){
+void *csvSearch(void * data){
+	//unpack Data struct
+	char * path = data->path;
+	char * outpath = data->outpath;
+	char * column = data->column;
+
 	DIR * dir = opendir(path);
 	struct dirent* currentFile;
 	char* nameEnd = "abcdefghijk"; 	//changed to 11 chars to check "-sorted.csv"
-	char* sorted = (char*)malloc(sizeof(toSortBy) + 13);
+	char* sorted = (char*)malloc(sizeof(toSortBy) + 13); // 13 is size of "-sorted-.csv" + 1 just in case
 	int nameLength = 0;	//length of filename (includes possible "-sorted-<whatever>.csv")
 	int endLength = 0;	//length of "-sorted-<whatever>.csv"
-	int status = 0;
 	char* newpath;
-	pid_t PID, child, wpid;
+	pthread_t *TID = malloc(sizeof(pthread_t));
+	pid_t wpid, child;
+	int status = 0;
+	Data newData;
 
 	strcpy(sorted, "-sorted-");
 	strcat(sorted, toSortBy);
@@ -25,25 +32,29 @@ void csvSearch(char* path, char* outpath, char* toSortBy){
 				strcpy(newpath, path);
 				strcat(newpath, "/");
 				strcat(newpath, currentFile->d_name);
+				newData = {newpath, outpath, column};
+				
 				if((child = fork()) == 0) {
-					csvSearch(newpath, outpath, toSortBy);
+					csvSearch(data);
 					exit(0);
 				}
 				nameEnd = currentFile->d_name;
 
-				if(nameLength > endLength){
+				//ignores directory entries less than 4 chars long
+				if(nameLength > endLength){ //checks long filenames to see if sorted
 					nameEnd = nameEnd + (nameLength - endLength);
-					if (strcmp(nameEnd, sorted) == 0)
+					if (strcmp(nameEnd, sorted) == 0)	//skips sorted file
 						continue;
-					nameEnd = nameEnd + endLength;
+					nameEnd = nameEnd + endLength;		//movies pointer to end of filename
 				}
-				if(nameLength > 4 && nameLength < endLength)
+				if(nameLength > 4 && nameLength < endLength) //moves nameEnd to last 4 chars
 					nameEnd = nameEnd + (nameLength - 4);
 				else
-					nameEnd = nameEnd - 4;
+					nameEnd = nameEnd - 4;		//moves nameEnd to last 4 chars (case 2)
 				if(strcmp(nameEnd, ".csv")==0){
 					if ((child = fork()) == 0){
-						csvSort(newpath, outpath, toSortBy);
+						newData = {newpath, outpath, column};
+						csvSort(newData);
 						exit(0);
 					}
 				}
@@ -62,7 +73,12 @@ void csvSearch(char* path, char* outpath, char* toSortBy){
 	//return processes;
 }
 
-void csvSort(char* pathToFile, char* outpath, char* column) {
+void *csvSort(void * data) {
+	//unpack Data struct
+	char * pathToFile = data->path;
+	char * outpath = data->outpath;
+	char * column = data->column;
+
 	FILE * toCount = fopen(pathToFile, "r");
 	FILE * toSort = fopen(pathToFile, "r");
 	char * filename = (char *)malloc(256 * sizeof(char));
