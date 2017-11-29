@@ -55,7 +55,7 @@ void *csvSearch(void * data){
 					nameEnd = nameEnd - 4;		//moves nameEnd to last 4 chars (case 2)
 				if(strcmp(nameEnd, ".csv")==0){
 					if ((child = fork()) == 0){
-						strcpy(newData->path, path);
+						strcpy(newData->path, newpath);
  						strcpy(newData->column, column);
 
 						csvSort(newData);
@@ -81,7 +81,7 @@ void *csvSearch(void * data){
 
 void *csvSort(void * data) {
 	//unpack Data struct
-	Data *input = data;
+	Data *input = (Data *) data;
 
 	char * pathToFile = input->path;
 	char * column = input->column;
