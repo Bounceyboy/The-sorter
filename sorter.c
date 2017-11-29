@@ -74,22 +74,19 @@ int main(int argc, char *argv[]) {
 
 	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-    printf("Initial PID: %d\n\n", getpid());
+    printf("Initial TID: %lu\n\n", pthread_self());
     printf("TIDs of all child threads: ");
 	pthread_create(&thread, NULL, csvSearch, data);
-
-	printf("Thread ID's %lu and %lu\n", pthread_self(), threads[0]);
 	
 
-	void * pv;
-	pthread_join(threads[0], &pv);
-	printf("hi from main\n");
 
 	void * pv;
 	pthread_join(thread, &pv);
 
+
 	//still need to multithread this?
 	mergeFiles(outpath, column);
+	printf("hi from main\n");
 
 	printf("and %lu\n\n", thread);
 	pthread_mutex_lock(&mutex);

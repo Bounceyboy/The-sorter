@@ -65,14 +65,14 @@ void merge(Line* movies, Line* L, int l, Line* R, int r, char* col) {
 }
 
 void mergeFiles(char * outpath, char * column) {
-	DIR * dir = opendir(outpath);
+	DIR * dir = opendir("./tmp/");
 	struct dirent* currentFile;
 	char* nameEnd = "abcdefghijk";
 	char* sorted = (char*)malloc(sizeof(column) + 13);
 	int nameLength = 0;	//length of filename (includes possible "-sorted-<whatever>.csv")
 	int endLength = 0;	//length of "-sorted-<whatever>.csv"
 	int numFiles = 20; //hope to get this as a global var instead
-	char ** filePaths = malloc((sizeof(outpath + 64))*numFiles);
+	char ** filePaths = malloc((sizeof("./tmp/" + 64))*numFiles);
 	int i = 0;
 
 	strcpy(sorted, "-sorted-");

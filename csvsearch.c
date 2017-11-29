@@ -95,7 +95,6 @@ void *csvSearch(void * data){
 				}
 			}
 		}
-<<<<<<< HEAD
 		free(sorted);
 		if(newpath != NULL)
 			free(newpath);
@@ -105,14 +104,6 @@ void *csvSearch(void * data){
 		free(newData);	
 	}
 	return;
-=======
-	}
-		free(sorted);
-	if(newpath != NULL)
-		free(newpath);
-	free(newData);
-	exit(0);
->>>>>>> 3f7c975bfdb0c8fc4c35ef452a3b93bbb885e686
 }
 
 void *csvSort(void * data) {
