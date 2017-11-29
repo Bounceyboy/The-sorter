@@ -16,7 +16,7 @@ void *csvSearch(void * data){
 	pthread_t *TID = malloc(sizeof(pthread_t));
 	pid_t wpid, child;
 	int status = 0;
-	Data *newData;
+	Data *newData = malloc(sizeof(Data));
 
 	strcpy(sorted, "-sorted-");
 	strcat(sorted, column);
@@ -34,10 +34,8 @@ void *csvSearch(void * data){
 				strcat(newpath, "/");
 				strcat(newpath, currentFile->d_name);
 
-				strncpy(newData->path, path, sizeof(path)-1);
-				newData->path[sizeof(path)-1] = '\0';
-				strncpy(newData->path, column, sizeof(column)-1);
-				newData->column[sizeof(column)-1] = '\0';
+				strcpy(newData->path, path);
+				strcpy(newData->path, column);
 
 				if((child = fork()) == 0) {
 					csvSearch(newData);
@@ -57,10 +55,8 @@ void *csvSearch(void * data){
 					nameEnd = nameEnd - 4;		//moves nameEnd to last 4 chars (case 2)
 				if(strcmp(nameEnd, ".csv")==0){
 					if ((child = fork()) == 0){
-						strncpy(newData->path, path, sizeof(path)-1);
-						newData->path[sizeof(path)-1] = '\0';
-						strncpy(newData->path, column, sizeof(column)-1);
-						newData->column[sizeof(column)-1] = '\0';
+						strcpy(newData->path, path);
+ 						strcpy(newData->path, column);
 
 						csvSort(newData);
 						exit(0);
@@ -74,6 +70,7 @@ void *csvSearch(void * data){
 		while((wpid = wait(&status)) > 0){
 			printf("%d, ", wpid);
 		}
+		free(newData);
 		exit(0);		
 
 	}
