@@ -1,24 +1,26 @@
 
 void *csvSearch(void * data){
 	//unpack Data struct
-	char * path = data->path;
-	char * outpath = data->outpath;
-	char * column = data->column;
+	Data *input = data;
+
+	char * path = input->path;
+	char * outpath = input->outpath;
+	char * column = input->column;
 
 	DIR * dir = opendir(path);
 	struct dirent* currentFile;
 	char* nameEnd = "abcdefghijk"; 	//changed to 11 chars to check "-sorted.csv"
-	char* sorted = (char*)malloc(sizeof(toSortBy) + 13); // 13 is size of "-sorted-.csv" + 1 just in case
+	char* sorted = (char*)malloc(sizeof(column) + 13); // 13 is size of "-sorted-.csv" + 1 just in case
 	int nameLength = 0;	//length of filename (includes possible "-sorted-<whatever>.csv")
 	int endLength = 0;	//length of "-sorted-<whatever>.csv"
 	char* newpath;
 	pthread_t *TID = malloc(sizeof(pthread_t));
 	pid_t wpid, child;
 	int status = 0;
-	Data newData;
+	Data *newData;
 
 	strcpy(sorted, "-sorted-");
-	strcat(sorted, toSortBy);
+	strcat(sorted, column);
 	strcat(sorted, ".csv");
 
 	endLength = strlen(sorted);
@@ -32,10 +34,16 @@ void *csvSearch(void * data){
 				strcpy(newpath, path);
 				strcat(newpath, "/");
 				strcat(newpath, currentFile->d_name);
-				newData = {newpath, outpath, column};
-				
+
+				strncpy(newData->path, path, sizeof(path)-1);
+				newData->path[sizeof(path)-1] = '\0';
+				strncpy(newData->outpath, outpath, sizeof(outpath)-1);
+				newData->outpath[sizeof(outpath)-1] = '\0';
+				strncpy(newData->path, column, sizeof(column)-1);
+				newData->column[sizeof(column)-1] = '\0';
+
 				if((child = fork()) == 0) {
-					csvSearch(data);
+					csvSearch(newData);
 					exit(0);
 				}
 				nameEnd = currentFile->d_name;
@@ -53,7 +61,13 @@ void *csvSearch(void * data){
 					nameEnd = nameEnd - 4;		//moves nameEnd to last 4 chars (case 2)
 				if(strcmp(nameEnd, ".csv")==0){
 					if ((child = fork()) == 0){
-						newData = {newpath, outpath, column};
+						strncpy(newData->path, path, sizeof(path)-1);
+						newData->path[sizeof(path)-1] = '\0';
+						strncpy(newData->outpath, outpath, sizeof(outpath)-1);
+						newData->outpath[sizeof(outpath)-1] = '\0';
+						strncpy(newData->path, column, sizeof(column)-1);
+						newData->column[sizeof(column)-1] = '\0';
+
 						csvSort(newData);
 						exit(0);
 					}
@@ -75,9 +89,11 @@ void *csvSearch(void * data){
 
 void *csvSort(void * data) {
 	//unpack Data struct
-	char * pathToFile = data->path;
-	char * outpath = data->outpath;
-	char * column = data->column;
+	Data *input = data;
+
+	char * pathToFile = input->path;
+	char * outpath = input->outpath;
+	char * column = input->column;
 
 	FILE * toCount = fopen(pathToFile, "r");
 	FILE * toSort = fopen(pathToFile, "r");

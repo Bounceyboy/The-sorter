@@ -62,7 +62,11 @@ int main(int argc, char *argv[]) {
 	else
 		strcat(path, ".");
 
-	Data data = {path, outpath, column};
+	Data* data;
+    strcpy(data->path, path);
+    strcpy(data->outpath, outpath);
+    strcpy(data->path, column);
+
 
 	if (pthread_create(&threads[threadCount], NULL, csvSearch, &data) == 0)
 		threadCount++;
