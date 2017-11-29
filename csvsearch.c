@@ -70,13 +70,9 @@ void *csvSearch(void * data){
 		while((wpid = wait(&status)) > 0){
 			printf("%d, ", wpid);
 		}
-		free(newData);
-		exit(0);		
-
+		free(newData);	
 	}
-	// printf("Total number of processes: %d\n", prcsnum);
-	// fflush(stdout);
-	//return processes;
+	return;
 }
 
 void *csvSort(void * data) {
@@ -90,7 +86,7 @@ void *csvSort(void * data) {
 	FILE * toSort = fopen(pathToFile, "r");
 	char * filename = (char *)malloc(256 * sizeof(char));
 	char * path = (char*)malloc(sizeof(char)*96); //directory where file is stored
-	char * outpath = (char*)malloc(sizeof(char)*96);
+	char * temp = (char*)malloc(sizeof(char)*96);
 	FILE * output; 			//path to -sorted file
 
 	strcpy(path, pathToFile); 	//path is direct path to file in this line
@@ -111,10 +107,10 @@ void *csvSort(void * data) {
 	strcat(filename, column);
 	strcat(filename, ".csv");
 
-	strcpy(outpath, "./tmp/");	//temp folder for individual files
-	mkdir(outpath, 0755);
-	strcat(outpath, filename);
-	output = fopen(outpath, "w"); //opens file in path to write to
+	strcpy(temp, "./tmp/");	//temp folder for individual files
+	mkdir(temp, 0755);
+	strcat(temp, filename);
+	output = fopen(temp, "w"); //opens file in path to write to
 
 	int numberOfLines = line_count(toCount);
 	fclose(toCount);

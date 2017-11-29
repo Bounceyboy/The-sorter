@@ -80,7 +80,7 @@ void mergeFiles(char * outpath, char * column) {
 	strcat(sorted, ".csv");
 
 	endLength = strlen(sorted);
-
+	printf("hi\n");
 	if (dir) {
 		while ((currentFile = readdir(dir)) != NULL){
 			if(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0);
@@ -98,9 +98,10 @@ void mergeFiles(char * outpath, char * column) {
 			}
 		}
 
-		i = 0; //reset i to 0
-		while(i < numFiles){
-			i++;
+		int j = 0;
+		while(j < i){
+			printf("FILE IS AT %s", filePaths[j]);
+			j++;
 		}
 	}
 	free(sorted);

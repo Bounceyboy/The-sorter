@@ -77,9 +77,11 @@ int main(int argc, char *argv[]) {
 		threadCount++;
 
 	printf("Thread ID's %lu and %lu\n", pthread_self(), threads[0]);
+	
 
 	void * pv;
 	pthread_join(threads[0], &pv);
+	printf("hi from main\n");
 
 	mergeFiles(outpath, column);
 
