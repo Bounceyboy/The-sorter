@@ -5,6 +5,9 @@ void *csvSearch(void * data){
 
 	char * path = input->path;
 	char * column = input->column;
+	int * threadCount = input->threadCount;
+
+	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 	DIR * dir = opendir(path);
 	struct dirent* currentFile;
@@ -13,10 +16,10 @@ void *csvSearch(void * data){
 	int nameLength = 0;	//length of filename (includes possible "-sorted-<whatever>.csv")
 	int endLength = 0;	//length of "-sorted-<whatever>.csv"
 	char* newpath;
-	pthread_t *TID = malloc(sizeof(pthread_t));
+	pthread_t tid[2];
 	pid_t wpid, child;
 	int status = 0;
-	Data *newData = malloc(sizeof(Data));
+	Data *newData = (Data *) malloc(sizeof(Data));
 
 	strcpy(sorted, "-sorted-");
 	strcat(sorted, column);
@@ -36,9 +39,19 @@ void *csvSearch(void * data){
 
 				strcpy(newData->path, newpath);
 				strcpy(newData->column, column);
+				newData->threadCount = threadCount;
 
-				if((child = fork()) == 0) {
-					csvSearch(newData);
+				if(pthread_create(&tid[0], NULL, csvSearch, newData) == 0) {
+					printf("%lu, ", tid[0]);
+					pthread_mutex_lock(&mutex);
+					*threadCount++;
+					pthread_mutex_unlock(&mutex);
+
+					pthread_join(tid[0], NULL);
+					free(sorted);
+					if(newpath != NULL)
+						free(newpath);
+					free(newData);
 					exit(0);
 				}
 				nameEnd = currentFile->d_name;
@@ -54,29 +67,40 @@ void *csvSearch(void * data){
 				else
 					nameEnd = nameEnd - 4;		//moves nameEnd to last 4 chars (case 2)
 				if(strcmp(nameEnd, ".csv")==0){
-					if ((child = fork()) == 0){
-						strcpy(newData->path, newpath);
- 						strcpy(newData->column, column);
+					strcpy(newData->path, newpath);
+					strcpy(newData->column, column);
+					newData->threadCount = threadCount;
 
-						csvSort(newData);
+					if (pthread_create(&tid[0], NULL, csvSort, newData) == 0){
+						pthread_create(&tid[1], NULL, csvSearch, newData);
+						printf("%lu, ", tid[0]);
+						printf("%lu, ", tid[1]);
+
+						pthread_mutex_lock(&mutex);
+						*threadCount++;
+						*threadCount++;
+						pthread_mutex_unlock(&mutex);						
+
+						int x;
+						for(x=0;x<2;x++){
+							pthread_join(tid[x], NULL);
+						}
+						free(sorted);
+						if(newpath != NULL)
+							free(newpath);
+						free(newData);					
+
 						exit(0);
 					}
 				}
 			}
 		}
-		free(sorted);
-		if(newpath != NULL)
-			free(newpath);
-		while((wpid = wait(&status)) > 0){
-			printf("%d, ", wpid);
-		}
-		free(newData);
-		exit(0);		
-
 	}
-	// printf("Total number of processes: %d\n", prcsnum);
-	// fflush(stdout);
-	//return processes;
+		free(sorted);
+	if(newpath != NULL)
+		free(newpath);
+	free(newData);
+	exit(0);
 }
 
 void *csvSort(void * data) {

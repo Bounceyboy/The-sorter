@@ -53,9 +53,7 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
-	pthread_t * threads = (pthread_t *)malloc(sizeof(pthread_t)*20); //assume 20 threads to start, can reallocate +10 when necessary
-	int maxThread = 20;
-	int threadCount = 0;
+	pthread_t thread;
 
 	if (path==NULL)
 		path = ".";
@@ -71,33 +69,26 @@ int main(int argc, char *argv[]) {
 
     strcpy(data->path, path);
     strcpy(data->column, column);
+    int x = 1;
+    data->threadCount = &x;
 
+	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-	if (pthread_create(&threads[threadCount], NULL, csvSearch, data) == 0)
-		threadCount++;
-
-	int x;
-
-	if(threadCount>1){
-		printf("Thread IDs %lu, ", pthread_self());
-		for(x = 0; x<threadCount-1; x++) {
-			printf("%lu, ", threads[x]);
-		}
-		printf("and %lu\n", threads[threadCount-1]);
-	}
-	else if(threadCount==1){
-		printf("Thread IDs %lu and %lu\n", pthread_self(),threads[0]);
-	}
-	else{
-		printf("No csv files found.\n");
-	}
+    printf("Initial PID: %d\n\n", getpid());
+    printf("TIDs of all child threads: ");
+	pthread_create(&thread, NULL, csvSearch, data);
 
 
 	void * pv;
-	pthread_join(threads[0], &pv);
+	pthread_join(thread, &pv);
 
+	//still need to multithread this?
 	mergeFiles(outpath, column);
 
+	printf("and %lu\n\n", thread);
+	pthread_mutex_lock(&mutex);
+	printf("Total number of threads: %d\n", *(data->threadCount));
+	pthread_mutex_unlock(&mutex);
 	free(data);
 	return 0;
 }

@@ -1,8 +1,5 @@
 #ifndef sorter_h
 #define sorter_h
-extern pthread_t * threads;
-extern int maxThread;
-extern int threadCount;
 
 //Line struct stores the data of each line of the CSV input file.
 typedef struct{					//I used typedef so we can reference just "Line" instead 
@@ -40,6 +37,7 @@ typedef struct{					//I used typedef so we can reference just "Line" instead
 typedef struct {
 	char path[256];
 	char column[32];
+	int * threadCount;
 } Data;
 
 
