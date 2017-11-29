@@ -57,24 +57,23 @@ int main(int argc, char *argv[]) {
 	int maxThread = 20;
 	int threadCount = 0;
 
-	if(path==NULL)
+	if (path==NULL)
 		path = ".";
 	else
 		strcat(path, ".");
 
-	if(outpath==NULL)
+	if (outpath==NULL)
 		outpath = ".";
 	else
 		strcat(outpath, ".");
 
-	Data *data = malloc(sizeof(Data *));
+	Data *data = malloc(sizeof(Data));
 
     strcpy(data->path, path);
-    strcpy(data->outpath, outpath);
     strcpy(data->column, column);
 
 
-	if (pthread_create(&threads[threadCount], NULL, csvSearch, &data) == 0)
+	if (pthread_create(&threads[threadCount], NULL, csvSearch, data) == 0)
 		threadCount++;
 
 	printf("Thread ID's %lu and %lu\n", pthread_self(), threads[0]);
@@ -82,7 +81,8 @@ int main(int argc, char *argv[]) {
 	void * pv;
 	pthread_join(threads[0], &pv);
 
-	//csvSearch(path, outpath, column); //searches and sorts
+	mergeFiles(outpath, column);
+
 	free(data);
 	return 0;
 }

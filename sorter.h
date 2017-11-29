@@ -39,7 +39,6 @@ typedef struct{					//I used typedef so we can reference just "Line" instead
 
 typedef struct {
 	char path[256];
-	char outpath[256];
 	char column[32];
 } Data;
 
@@ -52,9 +51,10 @@ void merge(Line* movies, Line* L, int l, Line* R, int r, char* col);
 int getIntElement(Line *line, char* col);
 double getDblElement(Line *line, char* col);
 char* getStrElement(Line *line, char* col);
-void *csvSearch(void * data);	//path, outpath, column
-void *csvSort(void * data);		//path, outpath, column
+void *csvSearch(void * data);	//path, column
+void *csvSort(void * data);		//path, column
 int line_count(FILE *n);
+void mergeFiles(char * outpath, char * column);
 
 //functions
 

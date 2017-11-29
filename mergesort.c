@@ -64,6 +64,43 @@ void merge(Line* movies, Line* L, int l, Line* R, int r, char* col) {
 		movies[k++] = R[j++];
 }
 
+void mergeFiles(char * outpath, char * column) {
+	DIR * dir = opendir(outpath);
+	struct dirent* currentFile;
+	char* sorted = (char*)malloc(sizeof(column) + 13);
+	int nameLength = 0;	//length of filename (includes possible "-sorted-<whatever>.csv")
+	int endLength = 0;	//length of "-sorted-<whatever>.csv"
+	char ** filePaths = malloc((sizeof(outpath + 64))*20);	//20 to be changed to num of sorted files
+	int i = 0;
+
+	strcpy(sorted, "-sorted-");
+	strcat(sorted, column);
+	strcat(sorted, ".csv");
+
+	endLength = strlen(sorted);
+
+	if (dir) {
+		while ((currentFile = readdir(dir)) != NULL){
+			if(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0);
+			else {
+				nameEnd = currentFile->d_name;
+				nameLength = strlen(nameEnd);
+				if (nameLength > endLength){
+					nameEnd = nameEnd + (nameLength - endLength);
+					if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
+						filePaths[i] = currentFile->d_name;
+						i++;
+					}
+					nameEnd = nameEnd + endLength;
+				}
+			}
+		}
+	}
+	free(sorted);
+	free(filePaths);
+	return;
+}
+
 int getIntElement(Line *line, char* col) {
 	if (!strcmp(col, "num_critic_for_reviews"))
 		return line -> num_critic_for_reviews;
