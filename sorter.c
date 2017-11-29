@@ -76,7 +76,22 @@ int main(int argc, char *argv[]) {
 	if (pthread_create(&threads[threadCount], NULL, csvSearch, data) == 0)
 		threadCount++;
 
-	printf("Thread ID's %lu and %lu\n", pthread_self(), threads[0]);
+	int x;
+
+	if(threadCount>1){
+		printf("Thread IDs %lu, ", pthread_self());
+		for(x = 0; x<threadCount-1; x++) {
+			printf("%lu, ", threads[x]);
+		}
+		printf("and %lu\n", threads[threadCount-1]);
+	}
+	else if(threadCount==1){
+		printf("Thread IDs %lu and %lu\n", pthread_self(),threads[0]);
+	}
+	else{
+		printf("No csv files found.\n");
+	}
+
 
 	void * pv;
 	pthread_join(threads[0], &pv);
