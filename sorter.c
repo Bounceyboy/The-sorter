@@ -83,6 +83,6 @@ int main(int argc, char *argv[]) {
 	pthread_join(threads[0], &pv);
 
 	//csvSearch(path, outpath, column); //searches and sorts
-
+	free(data);
 	return 0;
 }
