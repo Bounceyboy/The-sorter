@@ -67,14 +67,14 @@ int main(int argc, char *argv[]) {
 	else
 		strcat(outpath, ".");
 
-	Data *data = malloc(sizeof(Data *));
+	Data *data = malloc(sizeof(Data));
 
     strcpy(data->path, path);
     strcpy(data->outpath, outpath);
     strcpy(data->column, column);
 
 
-	if (pthread_create(&threads[threadCount], NULL, csvSearch, &data) == 0)
+	if (pthread_create(&threads[threadCount], NULL, csvSearch, data) == 0)
 		threadCount++;
 
 	printf("Thread ID's %lu and %lu\n", pthread_self(), threads[0]);
