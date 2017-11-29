@@ -34,8 +34,8 @@ void *csvSearch(void * data){
 				strcat(newpath, "/");
 				strcat(newpath, currentFile->d_name);
 
-				strcpy(newData->path, path);
-				strcpy(newData->path, column);
+				strcpy(newData->path, newpath);
+				strcpy(newData->column, column);
 
 				if((child = fork()) == 0) {
 					csvSearch(newData);
@@ -56,7 +56,7 @@ void *csvSearch(void * data){
 				if(strcmp(nameEnd, ".csv")==0){
 					if ((child = fork()) == 0){
 						strcpy(newData->path, path);
- 						strcpy(newData->path, column);
+ 						strcpy(newData->column, column);
 
 						csvSort(newData);
 						exit(0);
