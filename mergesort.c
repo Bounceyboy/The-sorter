@@ -67,10 +67,12 @@ void merge(Line* movies, Line* L, int l, Line* R, int r, char* col) {
 void mergeFiles(char * outpath, char * column) {
 	DIR * dir = opendir(outpath);
 	struct dirent* currentFile;
+	char* nameEnd = "abcdefghijk";
 	char* sorted = (char*)malloc(sizeof(column) + 13);
 	int nameLength = 0;	//length of filename (includes possible "-sorted-<whatever>.csv")
 	int endLength = 0;	//length of "-sorted-<whatever>.csv"
-	char ** filePaths = malloc((sizeof(outpath + 64))*20);	//20 to be changed to num of sorted files
+	int numFiles = 20; //hope to get this as a global var instead
+	char ** filePaths = malloc((sizeof(outpath + 64))*numFiles);
 	int i = 0;
 
 	strcpy(sorted, "-sorted-");
@@ -94,6 +96,11 @@ void mergeFiles(char * outpath, char * column) {
 					nameEnd = nameEnd + endLength;
 				}
 			}
+		}
+
+		i = 0; //reset i to 0
+		while(i < numFiles){
+			i++;
 		}
 	}
 	free(sorted);
