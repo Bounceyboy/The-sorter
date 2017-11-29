@@ -62,10 +62,16 @@ int main(int argc, char *argv[]) {
 	else
 		strcat(path, ".");
 
-	Data* data;
+	if(outpath==NULL)
+		outpath = ".";
+	else
+		strcat(outpath, ".");
+
+	Data *data = malloc(sizeof(Data *));
+
     strcpy(data->path, path);
     strcpy(data->outpath, outpath);
-    strcpy(data->path, column);
+    strcpy(data->column, column);
 
 
 	if (pthread_create(&threads[threadCount], NULL, csvSearch, &data) == 0)
