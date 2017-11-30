@@ -52,6 +52,11 @@ int main(int argc, char *argv[]) {
 		printf("Header does not exist.\n");
 		return 0;
 	}
+	// //testing
+	// mergeFiles(outpath, column);
+	// return 0;
+	// //end testing
+
 
 	pthread_t thread;
 
@@ -84,12 +89,18 @@ int main(int argc, char *argv[]) {
 	pthread_join(thread, &pv);
 
 
-	//still need to multithread this?
+	//q: still need to multithread this?
+
+	//a: no, there's no point because we need to wait for this to return before
+	//printing out the number of threads created, and we create more threads in
+	//mergeFiles
+
 	mergeFiles(outpath, column);
 	printf("hi from main\n");
 
 	printf("and %lu\n\n", thread);
 	pthread_mutex_lock(&mutex);
+	(*(data->threadCount))++;
 	printf("Total number of threads: %d\n", *(data->threadCount));
 	pthread_mutex_unlock(&mutex);
 	free(data);

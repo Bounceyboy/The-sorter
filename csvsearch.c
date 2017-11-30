@@ -17,8 +17,6 @@ void *csvSearch(void * data){
 	int endLength = 0;	//length of "-sorted-<whatever>.csv"
 	char* newpath;
 	pthread_t tid[2];
-	pid_t wpid, child;
-	int status = 0;
 	Data *newData = (Data *) malloc(sizeof(Data));
 
 	strcpy(sorted, "-sorted-");
@@ -52,7 +50,7 @@ void *csvSearch(void * data){
 					if(newpath != NULL)
 						free(newpath);
 					free(newData);
-					exit(0);
+					return;
 				}
 				nameEnd = currentFile->d_name;
 
@@ -89,19 +87,11 @@ void *csvSearch(void * data){
 						if(newpath != NULL)
 							free(newpath);
 						free(newData);					
-
-						exit(0);
+						return;
 					}
 				}
 			}
 		}
-		free(sorted);
-		if(newpath != NULL)
-			free(newpath);
-		while((wpid = wait(&status)) > 0){
-			printf("%d, ", wpid);
-		}
-		free(newData);	
 	}
 	return;
 }

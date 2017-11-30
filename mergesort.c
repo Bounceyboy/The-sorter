@@ -72,7 +72,9 @@ void mergeFiles(char * outpath, char * column) {
 	int nameLength = 0;	//length of filename (includes possible "-sorted-<whatever>.csv")
 	int endLength = 0;	//length of "-sorted-<whatever>.csv"
 	int numFiles = 20; //hope to get this as a global var instead
-	char ** filePaths = malloc((sizeof("./tmp/" + 64))*numFiles);
+	int size = sizeof("./tmp/" + 64);
+	char filePaths[numFiles][size];
+	char * filePath;
 	int i = 0;
 
 	strcpy(sorted, "-sorted-");
@@ -80,9 +82,8 @@ void mergeFiles(char * outpath, char * column) {
 	strcat(sorted, ".csv");
 
 	endLength = strlen(sorted);
-	printf("hi\n");
 	if (dir) {
-		while ((currentFile = readdir(dir)) != NULL){
+		while ((currentFile = readdir(dir)) != NULL) {
 			if(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0);
 			else {
 				nameEnd = currentFile->d_name;
@@ -90,23 +91,36 @@ void mergeFiles(char * outpath, char * column) {
 				if (nameLength > endLength){
 					nameEnd = nameEnd + (nameLength - endLength);
 					if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
-						filePaths[i] = currentFile->d_name;
+						filePath = filePaths[i * size];
+						strcpy(filePath, "./tmp/");
+						//printf("just tmp: %s\n", filePath);
+						strcat(filePath, currentFile->d_name);
+						//printf("filePath: %s\n", filePath);
+						//strcpy(filePaths[i],filePath);
+						//printf("filepaths[i]: %s\n", filePaths[i*sizeof("./tmp/" + 64)]);
+						//memset(filePath, 0, sizeof(filePath));
+						//printf("i before increment: %d\n", i);
 						i++;
+
 					}
 					nameEnd = nameEnd + endLength;
 				}
 			}
 		}
-
 		int j = 0;
-		while(j < i){
-			printf("FILE IS AT %s", filePaths[j]);
+		int size = sizeof("./tmp/" + 64);
+		while(j < 4){
+			printf("FILE IS AT %s\n", filePaths[j * size]);
 			j++;
 		}
+		//mergeTwoFiles(outpath, column, filePaths);
 	}
 	free(sorted);
-	free(filePaths);
 	return;
+}
+
+void mergeTwoFiles(char * outpath, char * column, char * path1, char * path2) {
+
 }
 
 int getIntElement(Line *line, char* col) {
