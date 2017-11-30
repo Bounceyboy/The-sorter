@@ -52,11 +52,6 @@ int main(int argc, char *argv[]) {
 		printf("Header does not exist.\n");
 		return 0;
 	}
-	// //testing
-	// mergeFiles(outpath, column);
-	// return 0;
-	// //end testing
-
 
 	pthread_t thread;
 
@@ -95,7 +90,62 @@ int main(int argc, char *argv[]) {
 	//printing out the number of threads created, and we create more threads in
 	//mergeFiles
 
-	mergeFiles(outpath, column);
+	//stores file paths into filePaths[][]
+	DIR * dir = opendir("./tmp/");
+	struct dirent* currentFile;
+	char* nameEnd = "abcdefghijk";
+	char* sorted = (char*)malloc(sizeof(column) + 13);
+	int nameLength = 0;	//length of filename (includes possible "-sorted-<whatever>.csv")
+	int endLength = 0;	//length of "-sorted-<whatever>.csv"
+	int numFiles = 20; //hope to get this as a global var instead
+	int size = sizeof("./tmp/" + 64);
+	char filePaths[numFiles][size];
+	char * filePath;
+	i = 0;
+
+	strcpy(sorted, "-sorted-");
+	strcat(sorted, column);
+	strcat(sorted, ".csv");
+
+	endLength = strlen(sorted);
+	if (dir) {
+		while ((currentFile = readdir(dir)) != NULL) {
+			if(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0);
+			else {
+				nameEnd = currentFile->d_name;
+				nameLength = strlen(nameEnd);
+				if (nameLength > endLength){
+					nameEnd = nameEnd + (nameLength - endLength);
+					if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
+						filePath = filePaths[i * size];
+						strcpy(filePath, "./tmp/");
+						//printf("just tmp: %s\n", filePath);
+						strcat(filePath, currentFile->d_name);
+						//printf("filePath: %s\n", filePath);
+						//strcpy(filePaths[i],filePath);
+						//printf("filepaths[i]: %s\n", filePaths[i*sizeof("./tmp/" + 64)]);
+						//memset(filePath, 0, sizeof(filePath));
+						//printf("i before increment: %d\n", i);
+						i++;
+
+					}
+					nameEnd = nameEnd + endLength;
+				}
+			}
+		}
+		int j = 0;
+		int size = sizeof("./tmp/" + 64);
+		while(j < i){
+			printf("FILE IS AT %s\n", filePaths[j * size]);
+			j++;
+		}
+
+		//put your code here; we don't want to call the function if there was never a tmp directory made
+
+	}
+
+
+	free(sorted);
 	printf("hi from main\n");
 
 	printf("and %lu\n\n", thread);

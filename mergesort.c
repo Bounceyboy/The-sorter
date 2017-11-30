@@ -64,61 +64,6 @@ void merge(Line* movies, Line* L, int l, Line* R, int r, char* col) {
 		movies[k++] = R[j++];
 }
 
-void mergeFiles(char * outpath, char * column) {
-	DIR * dir = opendir("./tmp/");
-	struct dirent* currentFile;
-	char* nameEnd = "abcdefghijk";
-	char* sorted = (char*)malloc(sizeof(column) + 13);
-	int nameLength = 0;	//length of filename (includes possible "-sorted-<whatever>.csv")
-	int endLength = 0;	//length of "-sorted-<whatever>.csv"
-	int numFiles = 20; //hope to get this as a global var instead
-	int size = sizeof("./tmp/" + 64);
-	char filePaths[numFiles][size];
-	char * filePath;
-	int i = 0;
-
-	strcpy(sorted, "-sorted-");
-	strcat(sorted, column);
-	strcat(sorted, ".csv");
-
-	endLength = strlen(sorted);
-	if (dir) {
-		while ((currentFile = readdir(dir)) != NULL) {
-			if(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0);
-			else {
-				nameEnd = currentFile->d_name;
-				nameLength = strlen(nameEnd);
-				if (nameLength > endLength){
-					nameEnd = nameEnd + (nameLength - endLength);
-					if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
-						filePath = filePaths[i * size];
-						strcpy(filePath, "./tmp/");
-						//printf("just tmp: %s\n", filePath);
-						strcat(filePath, currentFile->d_name);
-						//printf("filePath: %s\n", filePath);
-						//strcpy(filePaths[i],filePath);
-						//printf("filepaths[i]: %s\n", filePaths[i*sizeof("./tmp/" + 64)]);
-						//memset(filePath, 0, sizeof(filePath));
-						//printf("i before increment: %d\n", i);
-						i++;
-
-					}
-					nameEnd = nameEnd + endLength;
-				}
-			}
-		}
-		int j = 0;
-		int size = sizeof("./tmp/" + 64);
-		while(j < 4){
-			printf("FILE IS AT %s\n", filePaths[j * size]);
-			j++;
-		}
-		//mergeTwoFiles(outpath, column, filePaths);
-	}
-	free(sorted);
-	return;
-}
-
 void mergeTwoFiles(char * outpath, char * column, char * path1, char * path2) {
 
 }
