@@ -64,8 +64,18 @@ void merge(Line* movies, Line* L, int l, Line* R, int r, char* col) {
 		movies[k++] = R[j++];
 }
 
-void mergeTwoFiles(char * outpath, char * column, char * path1, char * path2) {
+void mergeTwoFiles(char * outpath, char * column, char * path1, char * path2, int num) {
+	FILE * file1 = fopen(path1, "r");
+	FILE * file2 = fopen(path2, "r");
 
+	char outfile[16];
+	sprintf(outfile, "./tmp/temp%d.csv", num);
+	FILE * result = fopen(outfile, "w");
+
+	fclose(file1);
+	fclose(file2);
+	fclose(result);
+	return;
 }
 
 int getIntElement(Line *line, char* col) {

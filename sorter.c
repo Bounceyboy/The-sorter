@@ -140,7 +140,9 @@ int main(int argc, char *argv[]) {
 			j++;
 		}
 
+		mergeTwoFiles(outpath, column, filePaths[0*size], filePaths[1*size], 1);
 		//put your code here; we don't want to call the function if there was never a tmp directory made
+		//each filePath in the filePaths array is in format ./tmp/filename-sorted-<column>.csv
 
 	}
 

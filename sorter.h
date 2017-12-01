@@ -52,7 +52,7 @@ char* getStrElement(Line *line, char* col);
 void *csvSearch(void * data);	//path, column
 void *csvSort(void * data);		//path, column
 int line_count(FILE *n);
-void mergeTwoFiles(char * outpath, char * column, char * path1, char * path2);
+void mergeTwoFiles(char * outpath, char * column, char * path1, char * path2, int num);
 
 //functions
 
