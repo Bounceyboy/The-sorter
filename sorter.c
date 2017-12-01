@@ -136,9 +136,10 @@ int main(int argc, char *argv[]) {
 		int j = 0;
 		int size = sizeof("./tmp/" + 64);
 		while(j < i){
-			printf("FILE IS AT %s\n", filePaths[j * size]);
+			//printf("FILE IS AT %s\n", filePaths[j * size]);
 			j++;
 		}
+
 
 		mergeTwoFiles(outpath, column, filePaths[0*size], filePaths[1*size], 1);
 		//put your code here; we don't want to call the function if there was never a tmp directory made
@@ -148,7 +149,7 @@ int main(int argc, char *argv[]) {
 
 
 	free(sorted);
-	printf("hi from main\n");
+	//printf("hi from main\n");
 
 	printf("and %lu\n\n", thread);
 	pthread_mutex_lock(&mutex);

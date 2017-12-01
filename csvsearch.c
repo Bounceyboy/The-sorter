@@ -1,4 +1,3 @@
-
 void *csvSearch(void * data){
 	//unpack Data struct
 	Data *input = (Data *) data;
@@ -28,8 +27,8 @@ void *csvSearch(void * data){
 	if (dir){
 		while((currentFile = readdir(dir)) != NULL){
 			nameLength = strlen(currentFile->d_name);
-			if(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0);
-			else{
+			//if not "." or ".."
+			if(!(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0)){
 				newpath = (char*)malloc((sizeof(char)*strlen(path)) + (sizeof(char)*nameLength) + 16);
 				strcpy(newpath, path);
 				strcat(newpath, "/");
@@ -38,19 +37,17 @@ void *csvSearch(void * data){
 				strcpy(newData->path, newpath);
 				strcpy(newData->column, column);
 				newData->threadCount = threadCount;
-
-				if(pthread_create(&tid[0], NULL, csvSearch, newData) == 0) {
-					printf("%lu, ", tid[0]);
-					pthread_mutex_lock(&mutex);
-					*threadCount++;
-					pthread_mutex_unlock(&mutex);
-
-					pthread_join(tid[0], NULL);
-					free(sorted);
-					if(newpath != NULL)
-						free(newpath);
-					free(newData);
-					return;
+				//check if file is directory
+				DIR * dir2 = opendir(newpath);
+				if(dir2){
+					if(pthread_create(&tid[0], NULL, csvSearch, newData) == 0) {
+						printf("%lu, ", tid[0]);
+						pthread_mutex_lock(&mutex);
+						*threadCount++;
+						pthread_mutex_unlock(&mutex);
+							//can maybe make this faster by removing this and having a tid array with size 3
+						pthread_join(tid[0], NULL);
+					}
 				}
 				nameEnd = currentFile->d_name;
 
@@ -70,28 +67,23 @@ void *csvSearch(void * data){
 					newData->threadCount = threadCount;
 
 					if (pthread_create(&tid[0], NULL, csvSort, newData) == 0){
-						pthread_create(&tid[1], NULL, csvSearch, newData);
 						printf("%lu, ", tid[0]);
-						printf("%lu, ", tid[1]);
 
 						pthread_mutex_lock(&mutex);
 						*threadCount++;
-						*threadCount++;
 						pthread_mutex_unlock(&mutex);						
-
-						int x;
-						for(x=0;x<2;x++){
-							pthread_join(tid[x], NULL);
-						}
+						//might be faster to remove this as well?
+						pthread_join(tid[0], NULL);
+					}
+				}
+			}
+		}
+		
 						free(sorted);
 						if(newpath != NULL)
 							free(newpath);
 						free(newData);					
 						return;
-					}
-				}
-			}
-		}
 	}
 	return;
 }
