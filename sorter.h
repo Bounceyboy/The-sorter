@@ -110,6 +110,8 @@ Line* importLine (char* buf){
 	
 	//store EVERYTHING!!!
 	strncpy(toReturn->color, tempPointer, strlen(tempPointer));
+	if(strcmp(toReturn->color,"lack and Whitee")==0)
+		strncpy(toReturn->color, "Black and White", strlen(tempPointer));
 	toReturn->color[strlen(tempPointer)]='\0';
 	
 	tempPointer = getNextToken(tokPointer, temp, tempPointer);

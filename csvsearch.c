@@ -162,12 +162,9 @@ void *csvSort(void * data) {
 
 	int x;
 	fprintf(output, "%s", header);
-	for(x=0;x<ArraySize;x++){
+	for(x=1;x<ArraySize;x++){
 
-		if(strcmp((&Lines[x])->color,"lack and Whitee"))
-			fprintf(output, "Black and White,");
-		else
-			fprintf(output, "%s,",(&Lines[x])->color);
+		fprintf(output, "%s,",(&Lines[x])->color);
 		fprintf(output, "%s,",(&Lines[x])->director_name);
 		fprintf(output, "%d,",(&Lines[x])->num_critic_for_reviews);
 		fprintf(output, "%d,",(&Lines[x])->duration);

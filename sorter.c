@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
 	int nameLength = 0;	//length of filename (includes possible "-sorted-<whatever>.csv")
 	int endLength = 0;	//length of "-sorted-<whatever>.csv"
 	int numFiles = 20; //hope to get this as a global var instead
-	int size = sizeof("./tmp/" + 64);
+	int size = sizeof("./tmp/" + 128);
 	char filePaths[numFiles][size];
 	char * filePath;
 	i = 0;
@@ -135,10 +135,11 @@ int main(int argc, char *argv[]) {
 		}
 		int j = 0;
 		int size = sizeof("./tmp/" + 64);
-		while(j < i){
-			//printf("FILE IS AT %s\n", filePaths[j * size]);
+		
+		/*while(j < i){
+			printf("FILE IS AT %s\n", filePaths[j * size]);
 			j++;
-		}
+		}*/
 
 
 		mergeTwoFiles(outpath, column, filePaths[0*size], filePaths[1*size], 1);
