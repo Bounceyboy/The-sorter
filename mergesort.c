@@ -68,8 +68,13 @@ void mergeTwoFiles(char * outpath, char * column, char * path1, char * path2, in
 	FILE * file1 = fopen(path1, "r");
 	FILE * file2 = fopen(path2, "r");
 
-	char outfile[16];
-	sprintf(outfile, "./tmp/temp%d.csv", num);
+	char* sorted = (char*)malloc(sizeof(column) + 13);
+	strcpy(sorted, "-sorted-");
+	strcat(sorted, column);
+	strcat(sorted, ".csv");
+
+	char outfile[64];
+	sprintf(outfile, "./tmp/temp%d%s", num, sorted);
 	FILE * result = fopen(outfile, "w");
 
 	fclose(file1);
