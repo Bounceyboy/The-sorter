@@ -79,8 +79,6 @@ int main(int argc, char *argv[]) {
 	pthread_create(&thread, NULL, csvSearch, data);
 
 	printf("%lu, ", thread);
-	
-
 
 	void * pv;
 	pthread_join(thread, &pv);
@@ -102,7 +100,6 @@ int main(int argc, char *argv[]) {
 	int nameLength = 0;	//length of filename (includes possible "-sorted-<whatever>.csv")
 	int endLength = 0;	//length of "-sorted-<whatever>.csv"
 	int numFiles = 0;
-	int size = sizeof("./bboyisverysexy420yoloswag69/" + 128);
 
 	if(countDir){
 		while((fileForCounting = readdir(countDir)) != NULL){
@@ -119,7 +116,6 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
-	printf("num of files: %d\n", numFiles);
 
 	char filePaths[numFiles][512];
 	char * filePath;
@@ -141,7 +137,7 @@ int main(int argc, char *argv[]) {
 					if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
 						filePath = filePaths[i];
 						strcpy(filePath, "./bboyisverysexy420yoloswag69/");
-						printf("just temp folder: %s\n", filePath);
+						//printf("just temp folder: %s\n", filePath);
 						strcat(filePath, currentFile->d_name);
 						i++;
 
@@ -150,14 +146,16 @@ int main(int argc, char *argv[]) {
 			}
 		}
 		int d = 0;
-		while (d < i){
+/*		while (d < i){
 			printf("%s\n", filePaths[d]);
-		}
+		}*/
 
 		int j;
 
 		// i is the number of files
+		pthread_t tid[i];
 		MergeData * mergeData = (MergeData *) malloc(sizeof(MergeData));
+		int f = 0;
 
 		while(i>3){
 			for(j = 0; j < (i/2) ; j++) {
@@ -172,7 +170,7 @@ int main(int argc, char *argv[]) {
 				pthread_mutex_lock(&mutex);
 				(*(data->threadCount))++;
 				pthread_mutex_unlock(&mutex);
-				pthread_create(&thread, NULL, mergeTwoFiles, mergeData);
+				pthread_create(&tid[f+j], NULL, mergeTwoFiles, mergeData);
 				printf("%lu, ", thread);
 			}
  
@@ -183,6 +181,7 @@ int main(int argc, char *argv[]) {
 			else{
 				i = i/2;
 			}
+			f = f+i;
 			//refill the first i files in filePaths with new filenames
 			closedir(dir);
 			dir = opendir("./bboyisverysexy420yoloswag69/");
@@ -202,6 +201,9 @@ int main(int argc, char *argv[]) {
 					}
 				}
 			}
+		}
+		for(j=0;j<f;j++){
+			pthread_join(tid[j], NULL);
 		}
 
 		//3 or fewer files left
@@ -223,7 +225,7 @@ int main(int argc, char *argv[]) {
 			pthread_mutex_lock(&mutex);
 			(*(data->threadCount))++;
 			pthread_mutex_unlock(&mutex);
-			pthread_create(&thread, NULL, mergeTwoFiles, mergeData);
+			mergeTwoFiles(mergeData);
 		}
 		else if(i==3){
 			pthread_mutex_lock(&mutex);
@@ -235,7 +237,7 @@ int main(int argc, char *argv[]) {
 			pthread_mutex_lock(&mutex);
 			(*(data->threadCount))++;
 			pthread_mutex_unlock(&mutex);
-			pthread_create(&thread, NULL, mergeTwoFiles, mergeData);
+			mergeTwoFiles(mergeData);
 			printf("%lu, ", thread);
 
 			//get new filenames
@@ -267,13 +269,14 @@ int main(int argc, char *argv[]) {
 			pthread_mutex_lock(&mutex);
 			(*(data->threadCount))++;
 			pthread_mutex_unlock(&mutex);
-			pthread_create(&thread, NULL, mergeTwoFiles, mergeData);
+			mergeTwoFiles(mergeData);
 		}
 	free(mergeData);
 	}
 
 
 	free(sorted);
+
 
 	printf("and %lu\n\n", thread);
 	pthread_mutex_lock(&mutex);

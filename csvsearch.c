@@ -47,8 +47,6 @@ void *csvSearch(void * data){
 						pthread_mutex_lock(&mutex);
 						(*threadCount)++;
 						pthread_mutex_unlock(&mutex);
-							//can maybe make this faster by removing this and having a tid array with size 3
-						pthread_join(tid[0], NULL);
 					}
 				}
 				closedir(dir2);
@@ -69,14 +67,14 @@ void *csvSearch(void * data){
 					strcpy(newData->column, column);
 					newData->threadCount = threadCount;
 
-					if (pthread_create(&tid[0], NULL, csvSort, newData) == 0){
-						printf("%lu, ", tid[0]);
+					if (pthread_create(&tid[1], NULL, csvSort, newData) == 0){
+						printf("%lu, ", tid[1]);
 
 						pthread_mutex_lock(&mutex);
 						(*threadCount)++;
 						pthread_mutex_unlock(&mutex);						
 						//might be faster to remove this as well?
-						pthread_join(tid[0], NULL);
+						pthread_join(tid[1], NULL);
 					}
 				}
 			}
