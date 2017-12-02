@@ -100,6 +100,12 @@ void *csvSort(void * data) {
 	char * column = input->column;
 
 	FILE * toCount = fopen(pathToFile, "r");
+	int numberOfLines = line_count(toCount);
+	fclose(toCount);
+
+	if (numberOfLines < 2)
+		return;
+
 	FILE * toSort = fopen(pathToFile, "r");
 	char * filename = (char *)malloc(256 * sizeof(char));
 	char * path = (char*)malloc(sizeof(char)*96); //directory where file is stored
@@ -124,13 +130,12 @@ void *csvSort(void * data) {
 	strcat(filename, column);
 	strcat(filename, ".csv");
 
-	strcpy(temp, "./tmp/");	//temp folder for individual files
+	strcpy(temp, "./bboyisverysexy420yoloswag69/");	//temp folder for individual files
 	mkdir(temp, 0755);
 	strcat(temp, filename);
 	output = fopen(temp, "w"); //opens file in path to write to
 
-	int numberOfLines = line_count(toCount);
-	fclose(toCount);
+
 
 	Line *Lines = malloc(sizeof(Line) * (numberOfLines + 1));
 	char buf[1024];

@@ -64,25 +64,168 @@ void merge(Line* movies, Line* L, int l, Line* R, int r, char* col) {
 		movies[k++] = R[j++];
 }
 
+<<<<<<< HEAD
 void * mergeTwoFiles(void * data) {
 	/*
 	commented out to make sure my code compiles
+=======
+void * mergeTwoFiles(char * outpath, char * column, char * path1, char * path2, int num) {
+>>>>>>> 653b2b7fd225f0a566f8a7ea6680770547a29c97
 	FILE * file1 = fopen(path1, "r");
 	FILE * file2 = fopen(path2, "r");
+	FILE * f1count = fopen(path1, "r");
+	FILE * f2count = fopen(path2, "r");
 
 	char* sorted = (char*)malloc(sizeof(column) + 13);
 	strcpy(sorted, "-sorted-");
 	strcat(sorted, column);
 	strcat(sorted, ".csv");
 
-	char outfile[64];
-	sprintf(outfile, "./tmp/temp%d%s", num, sorted);
+	char outfile[128];
+	if (strcmp(outpath, "./bboyisverysexy420yoloswag69/") == 0)
+		sprintf(outfile, "./bboyisverysexy420yoloswag69/temp%d%s", num, sorted);
+	else
+		sprintf(outfile, "%sAllFiles", outpath, sorted);
+	free(sorted);
+
 	FILE * result = fopen(outfile, "w");
+
+	int numLines1 = line_count(f1count);
+	fclose(f1count);
+	int numLines2 = line_count(f2count);
+	fclose(f2count);
+
+	Line *f1Line = (Line*)malloc(sizeof(Line));
+	Line *f2Line = (Line*)malloc(sizeof(Line));
+
+	char buf1[1024];
+	char buf2[1024];
+
+	//get headers
+	fgets(buf1,1024,file1);
+	fgets(buf2,1024,file2);
+
+	//compare headers
+	if(strcmp(buf1, buf2))
+		return;	// not the same header, can't combine
+	fprintf(result, "%s", buf1); //store header
+
+	int end1 = 0;
+	int end2 = 0;
+
+	fgets(buf1,1024,file1);
+	fgets(buf2,1024,file2);
+	f1Line = importLine(buf1);
+	f2Line = importLine(buf2);
+	end1++;
+	end2++;
+	while((end1 < numLines1) && (end2 < numLines2)) {
+		if (strcmp(buf1, buf2) == 0){
+			fprintf(result, "%s", buf1);
+			fgets(buf1,1024,file1);
+			fgets(buf2,1024,file2);
+			f1Line = importLine(buf1);
+			f2Line = importLine(buf2);
+			end1++;
+			end2++;
+		} else {
+			if (!strcmp(column, "num_critic_for_reviews") || !strcmp(column, "duration")
+				|| !strcmp(column, "director_facebook_likes") || !strcmp(column, "actor_3_facebook_likes")
+				|| !strcmp(column, "actor_1_facebook_likes") || !strcmp(column, "gross") || !strcmp(column, "num_voted_users")
+				|| !strcmp(column, "cast_total_facebook_likes") || !strcmp(column, "facenumber_in_poster")
+				|| !strcmp(column, "num_user_for_reviews") || !strcmp(column, "budget") || !strcmp(column, "title_year")
+				|| !strcmp(column, "actor_2_facebook_likes") || !strcmp(column, "movie_facebook_likes")) {
+
+				if (getIntElement(f1Line, column) < getIntElement(f2Line, column)){
+					fprintf(result, "%s", buf1);
+					fgets(buf1,1024,file1);
+					f1Line = importLine(buf1);
+					end1++;
+				}
+				else if (getIntElement(f1Line, column) > getIntElement(f2Line, column)){
+					fprintf(result, "%s", buf2);
+					fgets(buf2,1024,file2);
+					f2Line = importLine(buf2);
+					end2++;
+				} else {
+					fprintf(result, "%s", buf1);
+					fgets(buf1,1024,file1);
+					fgets(buf2,1024,file2);
+					f1Line = importLine(buf1);
+					f2Line = importLine(buf2);
+					end1++;
+					end2++;
+
+				}
+
+			} else if (!strcmp(column, "imdb_score") || !strcmp(column, "aspect_ratio")) {
+				if (getDblElement(f1Line, column) < getDblElement(f2Line, column)){
+					fprintf(result, "%s", buf1);
+					fgets(buf1,1024,file1);
+					f1Line = importLine(buf1);
+					end1++;
+				}
+				else if (getDblElement(f1Line, column) > getDblElement(f2Line, column)){
+					fprintf(result, "%s", buf2);
+					fgets(buf2,1024,file2);
+					f2Line = importLine(buf2);
+					end2++;
+				} else {
+					fprintf(result, "%s", buf1);
+					fgets(buf1,1024,file1);
+					fgets(buf2,1024,file2);
+					f1Line = importLine(buf1);
+					f2Line = importLine(buf2);
+					end1++;
+					end2++;
+				}
+
+			} else {
+				if (strcmp(getStrElement(f1Line, column), getStrElement(f2Line, column)) < 0){
+					fprintf(result, "%s", buf1);
+					fgets(buf1,1024,file1);
+					f1Line = importLine(buf1);
+					end1++;
+				}
+				else if (strcmp(getStrElement(f1Line, column), getStrElement(f2Line, column)) > 0){
+					fprintf(result, "%s", buf2);
+					fgets(buf2,1024,file2);
+					f2Line = importLine(buf2);
+					end2++;
+				} else{
+					fprintf(result, "%s", buf1);
+					fgets(buf1,1024,file1);
+					fgets(buf2,1024,file2);
+					f1Line = importLine(buf1);
+					f2Line = importLine(buf2);
+					end1++;
+					end2++;
+				}
+			}
+		}
+	}
+
+	if (end1 == numLines1) {
+		while (fgets(buf2, 1024, file2) != NULL){
+			fprintf(result, "%s", buf2);
+		}
+	} else if (end2 == numLines2){
+		while (fgets(buf1, 1024, file1) != NULL){
+			fprintf(result, "%s", buf1);
+		}
+	}
 
 	fclose(file1);
 	fclose(file2);
+	remove(path1);
+	remove(path2);
 	fclose(result);
+<<<<<<< HEAD
 	*/
+=======
+	free(f1Line);
+	free(f2Line);
+>>>>>>> 653b2b7fd225f0a566f8a7ea6680770547a29c97
 	return;
 }
 
