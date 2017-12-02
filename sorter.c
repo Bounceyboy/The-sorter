@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
 		while(i>3){
 			for(j = 0; j < (i/2) ; i++) {
 				pthread_mutex_lock(&mutex);
-				strcpy(mergeData->outpath, "./tmp/");
+				strcpy(mergeData->outpath, "./bboyisverysexy420yoloswag69/");
 				strcpy(mergeData->column, column);
 				strcpy(mergeData->file1, filePaths[j*size]);
 				strcpy(mergeData->file2, filePaths[(j+1)*size]);
@@ -164,7 +164,7 @@ int main(int argc, char *argv[]) {
 			}
 			//refill the first i files in filePaths with new filenames
 			closedir(dir);
-			dir = opendir("./tmp/");
+			dir = opendir("./bboyisverysexy420yoloswag69/");
 			while ((currentFile = readdir(dir)) != NULL) {
 				if(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0);
 				else {
@@ -174,7 +174,7 @@ int main(int argc, char *argv[]) {
 						nameEnd = nameEnd + (nameLength - endLength);
 						if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
 							filePath = filePaths[i * size];
-							strcpy(filePath, "./tmp/");
+							strcpy(filePath, "./bboyisverysexy420yoloswag69/");
 							strcat(filePath, currentFile->d_name);
 						}
 						nameEnd = nameEnd + endLength;
@@ -203,7 +203,7 @@ int main(int argc, char *argv[]) {
 		}
 		else if(i==3){
 			pthread_mutex_lock(&mutex);
-			strcpy(mergeData->outpath, "./tmp/");
+			strcpy(mergeData->outpath, "./bboyisverysexy420yoloswag69/");
 			strcpy(mergeData->column, column);
 			strcpy(mergeData->file1, filePaths[0]);
 			strcpy(mergeData->file2, filePaths[size]);
@@ -216,7 +216,7 @@ int main(int argc, char *argv[]) {
 
 			//get new filenames
 			closedir(dir);
-			dir = opendir("./tmp/");
+			dir = opendir("./bboyisverysexy420yoloswag69/");
 			while ((currentFile = readdir(dir)) != NULL) {
 				if(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0);
 				else {
@@ -226,7 +226,7 @@ int main(int argc, char *argv[]) {
 						nameEnd = nameEnd + (nameLength - endLength);
 						if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
 							filePath = filePaths[i * size];
-							strcpy(filePath, "./tmp/");
+							strcpy(filePath, "./bboyisverysexy420yoloswag69/");
 							strcat(filePath, currentFile->d_name);
 						}
 						nameEnd = nameEnd + endLength;
