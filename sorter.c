@@ -84,7 +84,6 @@ int main(int argc, char *argv[]) {
 
 	void * pv;
 	pthread_join(thread, &pv);
-	return 0;
 
 
 	//q: still need to multithread this?
@@ -101,9 +100,8 @@ int main(int argc, char *argv[]) {
 	int nameLength = 0;	//length of filename (includes possible "-sorted-<whatever>.csv")
 	int endLength = 0;	//length of "-sorted-<whatever>.csv"
 	int numFiles = 20; //hope to get this as a global var instead
-	int size = sizeof("./bboyisverysexy420yoloswag69/" + 128);
 
-	char filePaths[numFiles][size];
+	char filePaths[numFiles][512];
 	char * filePath;
 	i = 0;
 
@@ -121,7 +119,7 @@ int main(int argc, char *argv[]) {
 				if (nameLength > endLength){
 					nameEnd = nameEnd + (nameLength - endLength);
 					if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
-						filePath = filePaths[i * size];
+						filePath = filePaths[i];
 						strcpy(filePath, "./bboyisverysexy420yoloswag69/");
 						//printf("just tmp: %s\n", filePath);
 						strcat(filePath, currentFile->d_name);
@@ -134,18 +132,17 @@ int main(int argc, char *argv[]) {
 		}
 
 		int j;
-		int size = sizeof("./bboyisverysexy420yoloswag69/" + 64);
 		
 		// i is the number of files
 		MergeData * mergeData = (MergeData *) malloc(sizeof(MergeData));
 
 		while(i>3){
-			for(j = 0; j < (i/2) ; i++) {
+			for(j = 0; j < (i/2) ; j++) {
 				pthread_mutex_lock(&mutex);
 				strcpy(mergeData->outpath, "./bboyisverysexy420yoloswag69/");
 				strcpy(mergeData->column, column);
-				strcpy(mergeData->file1, filePaths[j*size]);
-				strcpy(mergeData->file2, filePaths[(j+1)*size]);
+				strcpy(mergeData->file1, filePaths[j]);
+				strcpy(mergeData->file2, filePaths[j+1]);
 				mergeData->filenum = j;
 				pthread_mutex_unlock(&mutex);
 				pthread_mutex_lock(&mutex);
@@ -173,7 +170,7 @@ int main(int argc, char *argv[]) {
 					if (nameLength > endLength){
 						nameEnd = nameEnd + (nameLength - endLength);
 						if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
-							filePath = filePaths[i * size];
+							filePath = filePaths[i];
 							strcpy(filePath, "./bboyisverysexy420yoloswag69/");
 							strcat(filePath, currentFile->d_name);
 						}
@@ -194,7 +191,7 @@ int main(int argc, char *argv[]) {
 			strcpy(mergeData->outpath, outpath);
 			strcpy(mergeData->column, column);
 			strcpy(mergeData->file1, filePaths[0]);
-			strcpy(mergeData->file2, filePaths[size]);
+			strcpy(mergeData->file2, filePaths[1]);
 			pthread_mutex_unlock(&mutex);
 			pthread_mutex_lock(&mutex);
 			(*(data->threadCount))++;
@@ -206,7 +203,7 @@ int main(int argc, char *argv[]) {
 			strcpy(mergeData->outpath, "./bboyisverysexy420yoloswag69/");
 			strcpy(mergeData->column, column);
 			strcpy(mergeData->file1, filePaths[0]);
-			strcpy(mergeData->file2, filePaths[size]);
+			strcpy(mergeData->file2, filePaths[1]);
 			pthread_mutex_unlock(&mutex);
 			pthread_mutex_lock(&mutex);
 			(*(data->threadCount))++;
@@ -225,7 +222,7 @@ int main(int argc, char *argv[]) {
 					if (nameLength > endLength){
 						nameEnd = nameEnd + (nameLength - endLength);
 						if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
-							filePath = filePaths[i * size];
+							filePath = filePaths[i];
 							strcpy(filePath, "./bboyisverysexy420yoloswag69/");
 							strcat(filePath, currentFile->d_name);
 						}
@@ -238,7 +235,7 @@ int main(int argc, char *argv[]) {
 			strcpy(mergeData->outpath, outpath);
 			strcpy(mergeData->column, column);
 			strcpy(mergeData->file1, filePaths[0]);
-			strcpy(mergeData->file2, filePaths[size]);
+			strcpy(mergeData->file2, filePaths[1]);
 			pthread_mutex_unlock(&mutex);
 			pthread_mutex_lock(&mutex);
 			(*(data->threadCount))++;
