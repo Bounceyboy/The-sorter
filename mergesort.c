@@ -64,17 +64,28 @@ void merge(Line* movies, Line* L, int l, Line* R, int r, char* col) {
 		movies[k++] = R[j++];
 }
 
-<<<<<<< HEAD
 void * mergeTwoFiles(void * data) {
-	/*
-	commented out to make sure my code compiles
-=======
 void * mergeTwoFiles(char * outpath, char * column, char * path1, char * path2, int num) {
->>>>>>> 653b2b7fd225f0a566f8a7ea6680770547a29c97
-	FILE * file1 = fopen(path1, "r");
-	FILE * file2 = fopen(path2, "r");
-	FILE * f1count = fopen(path1, "r");
-	FILE * f2count = fopen(path2, "r");
+
+	pthread_mutex_lock(&mutex);
+	MergeData input = (MergeData *) data;
+
+	char outpath[256];
+	char column[32];
+	char file1path[256];
+	char file2path[256];
+	int filenum = input->filenum;
+
+	strcpy(outpath, input->outpath);
+	strcpy(column, input->column);
+	strcpy(file1, input->file1path);
+	strcpy(file2, input->file2path);
+	pthread_mutex_unlock(&mutex);
+
+	FILE * file1 = fopen(file1path, "r");
+	FILE * file2 = fopen(file2path, "r");
+	FILE * f1count = fopen(file1path, "r");
+	FILE * f2count = fopen(file2path, "r");
 
 	char* sorted = (char*)malloc(sizeof(column) + 13);
 	strcpy(sorted, "-sorted-");
@@ -90,6 +101,7 @@ void * mergeTwoFiles(char * outpath, char * column, char * path1, char * path2, 
 
 	FILE * result = fopen(outfile, "w");
 
+	//multithread this
 	int numLines1 = line_count(f1count);
 	fclose(f1count);
 	int numLines2 = line_count(f2count);
@@ -220,12 +232,11 @@ void * mergeTwoFiles(char * outpath, char * column, char * path1, char * path2, 
 	remove(path1);
 	remove(path2);
 	fclose(result);
-<<<<<<< HEAD
-	*/
-=======
+
+
 	free(f1Line);
 	free(f2Line);
->>>>>>> 653b2b7fd225f0a566f8a7ea6680770547a29c97
+
 	return;
 }
 

@@ -53,9 +53,6 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
-	mergeTwoFiles("./bboyisverysexy420yoloswag69/", column, "./bboyisverysexy420yoloswag69/data-sorted-movie_title.csv", "./bboyisverysexy420yoloswag69/movie_metadata-sorted-movie_title.csv", 1);
-	return 0;
-
 	pthread_t thread;
 
 	if (path==NULL)
@@ -96,7 +93,7 @@ int main(int argc, char *argv[]) {
 	//mergeFiles
 
 	//stores file paths into filePaths[][]
-	DIR * dir = opendir("./tmp/");
+	DIR * dir = opendir("./bboyisverysexy420yoloswag69/");
 	struct dirent* currentFile;
 	char* nameEnd = "abcdefghijk";
 	char* sorted = (char*)malloc(sizeof(column) + 13);
@@ -124,12 +121,8 @@ int main(int argc, char *argv[]) {
 					nameEnd = nameEnd + (nameLength - endLength);
 					if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
 						filePath = filePaths[i * size];
-<<<<<<< HEAD
-						strcpy(filePath, "./tmp/");
-=======
 						strcpy(filePath, "./bboyisverysexy420yoloswag69/");
 						//printf("just tmp: %s\n", filePath);
->>>>>>> 653b2b7fd225f0a566f8a7ea6680770547a29c97
 						strcat(filePath, currentFile->d_name);
 						i++;
 
@@ -138,12 +131,9 @@ int main(int argc, char *argv[]) {
 				}
 			}
 		}
-<<<<<<< HEAD
+
 		int j;
-=======
-		int j = 0;
 		int size = sizeof("./bboyisverysexy420yoloswag69/" + 64);
->>>>>>> 653b2b7fd225f0a566f8a7ea6680770547a29c97
 		
 		// i is the number of files
 		MergeData * mergeData = (MergeData *) malloc(sizeof(MergeData));

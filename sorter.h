@@ -60,11 +60,7 @@ char* getStrElement(Line *line, char* col);
 void *csvSearch(void * data);	//path, column
 void *csvSort(void * data);		//path, column
 int line_count(FILE *n);
-<<<<<<< HEAD
 void * mergeTwoFiles(void * data);
-=======
-void *mergeTwoFiles(char * outpath, char * column, char * path1, char * path2, int num);
->>>>>>> 653b2b7fd225f0a566f8a7ea6680770547a29c97
 
 //functions
 
