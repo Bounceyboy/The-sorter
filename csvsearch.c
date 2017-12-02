@@ -14,7 +14,7 @@ void *csvSearch(void * data){
 	char* sorted = (char*)malloc(sizeof(column) + 13); // 13 is size of "-sorted-.csv" + 1 just in case
 	int nameLength = 0;	//length of filename (includes possible "-sorted-<whatever>.csv")
 	int endLength = 0;	//length of "-sorted-<whatever>.csv"
-	char* newpath;
+	char* newpath = NULL;
 	pthread_t tid[2];
 	Data *newData = (Data *) malloc(sizeof(Data));
 
@@ -29,6 +29,8 @@ void *csvSearch(void * data){
 			nameLength = strlen(currentFile->d_name);
 			//if not "." or ".."
 			if(!(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0)){
+				if(newpath != NULL)
+					free(newpath);
 				newpath = (char*)malloc((sizeof(char)*strlen(path)) + (sizeof(char)*nameLength) + 16);
 				strcpy(newpath, path);
 				strcat(newpath, "/");
@@ -43,12 +45,13 @@ void *csvSearch(void * data){
 					if(pthread_create(&tid[0], NULL, csvSearch, newData) == 0) {
 						printf("%lu, ", tid[0]);
 						pthread_mutex_lock(&mutex);
-						*threadCount++;
+						(*threadCount)++;
 						pthread_mutex_unlock(&mutex);
 							//can maybe make this faster by removing this and having a tid array with size 3
 						pthread_join(tid[0], NULL);
 					}
 				}
+				closedir(dir2);
 				nameEnd = currentFile->d_name;
 
 				if(nameLength > endLength){ //checks long filenames to see if sorted
@@ -70,7 +73,7 @@ void *csvSearch(void * data){
 						printf("%lu, ", tid[0]);
 
 						pthread_mutex_lock(&mutex);
-						*threadCount++;
+						(*threadCount)++;
 						pthread_mutex_unlock(&mutex);						
 						//might be faster to remove this as well?
 						pthread_join(tid[0], NULL);
@@ -79,11 +82,12 @@ void *csvSearch(void * data){
 			}
 		}
 		
-						free(sorted);
-						if(newpath != NULL)
-							free(newpath);
-						free(newData);					
-						return;
+		free(sorted);
+		if(newpath != NULL)
+			free(newpath);
+		free(newData);	
+		closedir(dir);				
+		return;
 	}
 	return;
 }

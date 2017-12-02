@@ -64,7 +64,9 @@ void merge(Line* movies, Line* L, int l, Line* R, int r, char* col) {
 		movies[k++] = R[j++];
 }
 
-void mergeTwoFiles(char * outpath, char * column, char * path1, char * path2, int num) {
+void * mergeTwoFiles(void * data) {
+	/*
+	commented out to make sure my code compiles
 	FILE * file1 = fopen(path1, "r");
 	FILE * file2 = fopen(path2, "r");
 
@@ -80,6 +82,7 @@ void mergeTwoFiles(char * outpath, char * column, char * path1, char * path2, in
 	fclose(file1);
 	fclose(file2);
 	fclose(result);
+	*/
 	return;
 }
 

@@ -77,6 +77,8 @@ int main(int argc, char *argv[]) {
     printf("Initial TID: %lu\n\n", pthread_self());
     printf("TIDs of all child threads: ");
 	pthread_create(&thread, NULL, csvSearch, data);
+
+	printf("%lu, ", thread);
 	
 
 
@@ -119,13 +121,7 @@ int main(int argc, char *argv[]) {
 					if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
 						filePath = filePaths[i * size];
 						strcpy(filePath, "./tmp/");
-						//printf("just tmp: %s\n", filePath);
 						strcat(filePath, currentFile->d_name);
-						//printf("filePath: %s\n", filePath);
-						//strcpy(filePaths[i],filePath);
-						//printf("filepaths[i]: %s\n", filePaths[i*sizeof("./tmp/" + 64)]);
-						//memset(filePath, 0, sizeof(filePath));
-						//printf("i before increment: %d\n", i);
 						i++;
 
 					}
@@ -133,24 +129,122 @@ int main(int argc, char *argv[]) {
 				}
 			}
 		}
-		int j = 0;
-		int size = sizeof("./tmp/" + 64);
+		int j;
 		
-		/*while(j < i){
-			printf("FILE IS AT %s\n", filePaths[j * size]);
-			j++;
-		}*/
+		// i is the number of files
+		MergeData * mergeData = (MergeData *) malloc(sizeof(MergeData));
 
+		while(i>3){
+			for(j = 0; j < (i/2) ; i++) {
+				pthread_mutex_lock(&mutex);
+				strcpy(mergeData->outpath, "./tmp/");
+				strcpy(mergeData->column, column);
+				strcpy(mergeData->file1, filePaths[j*size]);
+				strcpy(mergeData->file2, filePaths[(j+1)*size]);
+				mergeData->filenum = j;
+				pthread_mutex_unlock(&mutex);
+				pthread_mutex_lock(&mutex);
+				(*(data->threadCount))++;
+				pthread_mutex_unlock(&mutex);
+				pthread_create(&thread, NULL, mergeTwoFiles, mergeData);
+				printf("%lu, ", thread);
+			}
+ 
+			if(i%2 == 1){
+				i = i/2;
+				i++;
+			}
+			else{
+				i = i/2;
+			}
+			//refill the first i files in filePaths with new filenames
+			closedir(dir);
+			dir = opendir("./tmp/");
+			while ((currentFile = readdir(dir)) != NULL) {
+				if(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0);
+				else {
+					nameEnd = currentFile->d_name;
+					nameLength = strlen(nameEnd);
+					if (nameLength > endLength){
+						nameEnd = nameEnd + (nameLength - endLength);
+						if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
+							filePath = filePaths[i * size];
+							strcpy(filePath, "./tmp/");
+							strcat(filePath, currentFile->d_name);
+						}
+						nameEnd = nameEnd + endLength;
+					}
+				}
+			}
+		}
 
-		mergeTwoFiles(outpath, column, filePaths[0*size], filePaths[1*size], 1);
-		//put your code here; we don't want to call the function if there was never a tmp directory made
-		//each filePath in the filePaths array is in format ./tmp/filename-sorted-<column>.csv
+		//3 or fewer files left
+		if(i==1){
+			//there was only 1 csv file found
+			//rename to final name, delete /tmp/ or whatever the folder's called
+			//place in outpath location
+		}
+		else if(i==2){
+			pthread_mutex_lock(&mutex);
+			strcpy(mergeData->outpath, outpath);
+			strcpy(mergeData->column, column);
+			strcpy(mergeData->file1, filePaths[0]);
+			strcpy(mergeData->file2, filePaths[size]);
+			pthread_mutex_unlock(&mutex);
+			pthread_mutex_lock(&mutex);
+			(*(data->threadCount))++;
+			pthread_mutex_unlock(&mutex);
+			pthread_create(&thread, NULL, mergeTwoFiles, mergeData);
+		}
+		else if(i==3){
+			pthread_mutex_lock(&mutex);
+			strcpy(mergeData->outpath, "./tmp/");
+			strcpy(mergeData->column, column);
+			strcpy(mergeData->file1, filePaths[0]);
+			strcpy(mergeData->file2, filePaths[size]);
+			pthread_mutex_unlock(&mutex);
+			pthread_mutex_lock(&mutex);
+			(*(data->threadCount))++;
+			pthread_mutex_unlock(&mutex);
+			pthread_create(&thread, NULL, mergeTwoFiles, mergeData);
+			printf("%lu, ", thread);
 
+			//get new filenames
+			closedir(dir);
+			dir = opendir("./tmp/");
+			while ((currentFile = readdir(dir)) != NULL) {
+				if(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0);
+				else {
+					nameEnd = currentFile->d_name;
+					nameLength = strlen(nameEnd);
+					if (nameLength > endLength){
+						nameEnd = nameEnd + (nameLength - endLength);
+						if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
+							filePath = filePaths[i * size];
+							strcpy(filePath, "./tmp/");
+							strcat(filePath, currentFile->d_name);
+						}
+						nameEnd = nameEnd + endLength;
+					}
+				}
+			}
+
+			pthread_mutex_lock(&mutex);
+			strcpy(mergeData->outpath, outpath);
+			strcpy(mergeData->column, column);
+			strcpy(mergeData->file1, filePaths[0]);
+			strcpy(mergeData->file2, filePaths[size]);
+			pthread_mutex_unlock(&mutex);
+			pthread_mutex_lock(&mutex);
+			(*(data->threadCount))++;
+			pthread_mutex_unlock(&mutex);
+			pthread_create(&thread, NULL, mergeTwoFiles, mergeData);
+		}
+	free(mergeData);
 	}
 
 
 	free(sorted);
-	//printf("hi from main\n");
 
 	printf("and %lu\n\n", thread);
 	pthread_mutex_lock(&mutex);
