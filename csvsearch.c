@@ -108,8 +108,8 @@ void *csvSort(void * data) {
 
 	FILE * toSort = fopen(pathToFile, "r");
 	char * filename = (char *)malloc(256 * sizeof(char));
-	char * path = (char*)malloc(sizeof(char)*96); //directory where file is stored
-	char * temp = (char*)malloc(sizeof(char)*96);
+	char * path = (char*)malloc(sizeof(char)*256); //directory where file is stored
+	char * temp = (char*)malloc(sizeof(char)*256);
 	FILE * output; 			//path to -sorted file
 
 	strcpy(path, pathToFile); 	//path is direct path to file in this line
