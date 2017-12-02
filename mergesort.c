@@ -81,6 +81,7 @@ void * mergeTwoFiles(char * outpath, char * column, char * path1, char * path2, 
 	else
 		sprintf(outfile, "%sAllFiles", outpath, sorted);
 	free(sorted);
+
 	FILE * result = fopen(outfile, "w");
 
 	int numLines1 = line_count(f1count);

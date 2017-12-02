@@ -102,6 +102,7 @@ int main(int argc, char *argv[]) {
 	int endLength = 0;	//length of "-sorted-<whatever>.csv"
 	int numFiles = 20; //hope to get this as a global var instead
 	int size = sizeof("./bboyisverysexy420yoloswag69/" + 128);
+
 	char filePaths[numFiles][size];
 	char * filePath;
 	i = 0;
