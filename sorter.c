@@ -141,17 +141,12 @@ int main(int argc, char *argv[]) {
 					if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
 						filePath = filePaths[i];
 						strcpy(filePath, "./bboyisverysexy420yoloswag69/");
-						printf("just temp folder: %s\n", filePath);
 						strcat(filePath, currentFile->d_name);
 						i++;
 
 					}
 				}
 			}
-		}
-		int d = 0;
-		while (d < i){
-			printf("%s\n", filePaths[d]);
 		}
 
 		int j;
@@ -166,7 +161,7 @@ int main(int argc, char *argv[]) {
 				strcpy(mergeData->column, column);
 				strcpy(mergeData->file1, filePaths[j]);
 				strcpy(mergeData->file2, filePaths[j+1]);
-				
+
 				mergeData->filenum = j;
 				pthread_mutex_unlock(&mutex);
 				pthread_mutex_lock(&mutex);
@@ -207,11 +202,17 @@ int main(int argc, char *argv[]) {
 		//3 or fewer files left
 		if(i==1){
 			//there was only 1 csv file found
-			char * output = (char *)malloc(sizeof(sorted) + sizeof(outpath) + 12);
+			mkdir(outpath, 0766);
+			char * output = (char *)malloc(sizeof(sorted) + sizeof(outpath) + 64);
 			strcpy(output, outpath);
 			strcat(output, "/AllFiles");
 			strcat(output, sorted);
+			//printf("%s\n", filePaths[0]);
+			//printf("%s\n", output);
 			rename(filePaths[0], output);
+			//printf("%s\n", filePaths[0]);
+			//printf("%s\n", output);
+			//printf("PogChamp\n");
 		}
 		else if(i==2){
 			pthread_mutex_lock(&mutex);
