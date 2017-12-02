@@ -65,10 +65,10 @@ void merge(Line* movies, Line* L, int l, Line* R, int r, char* col) {
 }
 
 void * mergeTwoFiles(void * data) {
-void * mergeTwoFiles(char * outpath, char * column, char * path1, char * path2, int num) {
+	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 	pthread_mutex_lock(&mutex);
-	MergeData input = (MergeData *) data;
+	MergeData * input = (MergeData *) data;
 
 	char outpath[256];
 	char column[32];
@@ -78,8 +78,8 @@ void * mergeTwoFiles(char * outpath, char * column, char * path1, char * path2, 
 
 	strcpy(outpath, input->outpath);
 	strcpy(column, input->column);
-	strcpy(file1, input->file1path);
-	strcpy(file2, input->file2path);
+	strcpy(file1path, input->file1);
+	strcpy(file2path, input->file2);
 	pthread_mutex_unlock(&mutex);
 
 	FILE * file1 = fopen(file1path, "r");
@@ -94,7 +94,7 @@ void * mergeTwoFiles(char * outpath, char * column, char * path1, char * path2, 
 
 	char outfile[128];
 	if (strcmp(outpath, "./bboyisverysexy420yoloswag69/") == 0)
-		sprintf(outfile, "./bboyisverysexy420yoloswag69/temp%d%s", num, sorted);
+		sprintf(outfile, "./bboyisverysexy420yoloswag69/temp%d%s", filenum, sorted);
 	else
 		sprintf(outfile, "%sAllFiles", outpath, sorted);
 	free(sorted);
@@ -229,11 +229,9 @@ void * mergeTwoFiles(char * outpath, char * column, char * path1, char * path2, 
 
 	fclose(file1);
 	fclose(file2);
-	remove(path1);
-	remove(path2);
+	remove(file1path);
+	remove(file2path);
 	fclose(result);
-
-
 	free(f1Line);
 	free(f2Line);
 

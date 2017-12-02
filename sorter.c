@@ -84,6 +84,7 @@ int main(int argc, char *argv[]) {
 
 	void * pv;
 	pthread_join(thread, &pv);
+	return 0;
 
 
 	//q: still need to multithread this?
