@@ -104,12 +104,15 @@ void * mergeTwoFiles(char * outpath, char * column, char * path1, char * path2, 
 		return;	// not the same header, can't combine
 	fprintf(result, "%s", buf1); //store header
 
-	int end1;
-	int end2;
+	int end1 = 0;
+	int end2 = 0;
 
 	fgets(buf1,1024,file1);
 	fgets(buf2,1024,file2);
-
+	f1Line = importLine(buf1);
+	f2Line = importLine(buf2);
+	end1++;
+	end2++;
 	while((end1 < numLines1) && (end2 < numLines2)) {
 		if (strcmp(buf1, buf2) == 0){
 			fprintf(result, "%s", buf1);
