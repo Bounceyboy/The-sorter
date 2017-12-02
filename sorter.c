@@ -53,6 +53,9 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
+	mergeTwoFiles("./bboyisverysexy420yoloswag69/", column, "./bboyisverysexy420yoloswag69/data-sorted-movie_title.csv", "./bboyisverysexy420yoloswag69/movie_metadata-sorted-movie_title.csv", 1);
+	return 0;
+
 	pthread_t thread;
 
 	if (path==NULL)
@@ -98,7 +101,7 @@ int main(int argc, char *argv[]) {
 	int nameLength = 0;	//length of filename (includes possible "-sorted-<whatever>.csv")
 	int endLength = 0;	//length of "-sorted-<whatever>.csv"
 	int numFiles = 20; //hope to get this as a global var instead
-	int size = sizeof("./tmp/" + 64);
+	int size = sizeof("./bboyisverysexy420yoloswag69/" + 128);
 	char filePaths[numFiles][size];
 	char * filePath;
 	i = 0;
@@ -118,7 +121,7 @@ int main(int argc, char *argv[]) {
 					nameEnd = nameEnd + (nameLength - endLength);
 					if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
 						filePath = filePaths[i * size];
-						strcpy(filePath, "./tmp/");
+						strcpy(filePath, "./bboyisverysexy420yoloswag69/");
 						//printf("just tmp: %s\n", filePath);
 						strcat(filePath, currentFile->d_name);
 						//printf("filePath: %s\n", filePath);
@@ -134,11 +137,13 @@ int main(int argc, char *argv[]) {
 			}
 		}
 		int j = 0;
-		int size = sizeof("./tmp/" + 64);
-		while(j < i){
+		int size = sizeof("./bboyisverysexy420yoloswag69/" + 64);
+		
+		/*while(j < i){
 			printf("FILE IS AT %s\n", filePaths[j * size]);
 			j++;
-		}
+		}*/
+
 
 		mergeTwoFiles(outpath, column, filePaths[0*size], filePaths[1*size], 1);
 		//put your code here; we don't want to call the function if there was never a tmp directory made
@@ -148,7 +153,7 @@ int main(int argc, char *argv[]) {
 
 
 	free(sorted);
-	printf("hi from main\n");
+	//printf("hi from main\n");
 
 	printf("and %lu\n\n", thread);
 	pthread_mutex_lock(&mutex);

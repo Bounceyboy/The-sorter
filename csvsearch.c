@@ -1,4 +1,3 @@
-
 void *csvSearch(void * data){
 	//unpack Data struct
 	Data *input = (Data *) data;
@@ -28,8 +27,8 @@ void *csvSearch(void * data){
 	if (dir){
 		while((currentFile = readdir(dir)) != NULL){
 			nameLength = strlen(currentFile->d_name);
-			if(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0);
-			else{
+			//if not "." or ".."
+			if(!(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0)){
 				newpath = (char*)malloc((sizeof(char)*strlen(path)) + (sizeof(char)*nameLength) + 16);
 				strcpy(newpath, path);
 				strcat(newpath, "/");
@@ -38,19 +37,17 @@ void *csvSearch(void * data){
 				strcpy(newData->path, newpath);
 				strcpy(newData->column, column);
 				newData->threadCount = threadCount;
-
-				if(pthread_create(&tid[0], NULL, csvSearch, newData) == 0) {
-					printf("%lu, ", tid[0]);
-					pthread_mutex_lock(&mutex);
-					*threadCount++;
-					pthread_mutex_unlock(&mutex);
-
-					pthread_join(tid[0], NULL);
-					free(sorted);
-					if(newpath != NULL)
-						free(newpath);
-					free(newData);
-					return;
+				//check if file is directory
+				DIR * dir2 = opendir(newpath);
+				if(dir2){
+					if(pthread_create(&tid[0], NULL, csvSearch, newData) == 0) {
+						printf("%lu, ", tid[0]);
+						pthread_mutex_lock(&mutex);
+						*threadCount++;
+						pthread_mutex_unlock(&mutex);
+							//can maybe make this faster by removing this and having a tid array with size 3
+						pthread_join(tid[0], NULL);
+					}
 				}
 				nameEnd = currentFile->d_name;
 
@@ -70,28 +67,23 @@ void *csvSearch(void * data){
 					newData->threadCount = threadCount;
 
 					if (pthread_create(&tid[0], NULL, csvSort, newData) == 0){
-						pthread_create(&tid[1], NULL, csvSearch, newData);
 						printf("%lu, ", tid[0]);
-						printf("%lu, ", tid[1]);
 
 						pthread_mutex_lock(&mutex);
 						*threadCount++;
-						*threadCount++;
 						pthread_mutex_unlock(&mutex);						
-
-						int x;
-						for(x=0;x<2;x++){
-							pthread_join(tid[x], NULL);
-						}
+						//might be faster to remove this as well?
+						pthread_join(tid[0], NULL);
+					}
+				}
+			}
+		}
+		
 						free(sorted);
 						if(newpath != NULL)
 							free(newpath);
 						free(newData);					
 						return;
-					}
-				}
-			}
-		}
 	}
 	return;
 }
@@ -104,6 +96,12 @@ void *csvSort(void * data) {
 	char * column = input->column;
 
 	FILE * toCount = fopen(pathToFile, "r");
+	int numberOfLines = line_count(toCount);
+	fclose(toCount);
+
+	if (numberOfLines < 2)
+		return;
+
 	FILE * toSort = fopen(pathToFile, "r");
 	char * filename = (char *)malloc(256 * sizeof(char));
 	char * path = (char*)malloc(sizeof(char)*96); //directory where file is stored
@@ -128,13 +126,12 @@ void *csvSort(void * data) {
 	strcat(filename, column);
 	strcat(filename, ".csv");
 
-	strcpy(temp, "./tmp/");	//temp folder for individual files
+	strcpy(temp, "./bboyisverysexy420yoloswag69/");	//temp folder for individual files
 	mkdir(temp, 0755);
 	strcat(temp, filename);
 	output = fopen(temp, "w"); //opens file in path to write to
 
-	int numberOfLines = line_count(toCount);
-	fclose(toCount);
+
 
 	Line *Lines = malloc(sizeof(Line) * (numberOfLines + 1));
 	char buf[1024];
@@ -170,12 +167,9 @@ void *csvSort(void * data) {
 
 	int x;
 	fprintf(output, "%s", header);
-	for(x=0;x<ArraySize;x++){
+	for(x=1;x<ArraySize;x++){
 
-		if(strcmp((&Lines[x])->color,"lack and Whitee"))
-			fprintf(output, "Black and White,");
-		else
-			fprintf(output, "%s,",(&Lines[x])->color);
+		fprintf(output, "%s,",(&Lines[x])->color);
 		fprintf(output, "%s,",(&Lines[x])->director_name);
 		fprintf(output, "%d,",(&Lines[x])->num_critic_for_reviews);
 		fprintf(output, "%d,",(&Lines[x])->duration);
