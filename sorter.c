@@ -95,15 +95,34 @@ int main(int argc, char *argv[]) {
 
 	//stores file paths into filePaths[][]
 	DIR * dir = opendir("./bboyisverysexy420yoloswag69/");
+	DIR * countDir = opendir("./bboyisverysexy420yoloswag69/");
+	struct dirent* fileForCounting;
 	struct dirent* currentFile;
 	char* nameEnd = "abcdefghijk";
 	char* sorted = (char*)malloc(sizeof(column) + 13);
 	int nameLength = 0;	//length of filename (includes possible "-sorted-<whatever>.csv")
 	int endLength = 0;	//length of "-sorted-<whatever>.csv"
-	int numFiles = 20; //hope to get this as a global var instead
+	int numFiles = 0;
 	int size = sizeof("./bboyisverysexy420yoloswag69/" + 128);
 
-	char filePaths[numFiles][size];
+	if(countDir){
+		while((fileForCounting = readdir(countDir)) != NULL){
+			if(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0);
+			else {
+				nameEnd = currentFile->d_name;
+				nameLength = strlen(nameEnd);
+				if (nameLength > endLength){
+					nameEnd = nameEnd + (nameLength - endLength);
+					if(strcmp(nameEnd, sorted) == 0){	//sorted, count it!
+						numFiles++;
+					}
+				}
+			}
+		}
+	}
+	printf("num of files: %d\n", numFiles);
+
+	char filePaths[numFiles][512];
 	char * filePath;
 	i = 0;
 
@@ -121,21 +140,23 @@ int main(int argc, char *argv[]) {
 				if (nameLength > endLength){
 					nameEnd = nameEnd + (nameLength - endLength);
 					if(strcmp(nameEnd, sorted) == 0){	//sorted, add to array of sorted-file paths
-						filePath = filePaths[i * size];
+						filePath = filePaths[i];
 						strcpy(filePath, "./bboyisverysexy420yoloswag69/");
-						//printf("just tmp: %s\n", filePath);
+						printf("just temp folder: %s\n", filePath);
 						strcat(filePath, currentFile->d_name);
 						i++;
 
 					}
-					nameEnd = nameEnd + endLength;
 				}
 			}
 		}
+		int d = 0;
+		while (d < i){
+			printf("%s\n", filePaths[d]);
+		}
 
 		int j;
-		int size = sizeof("./bboyisverysexy420yoloswag69/" + 64);
-		
+
 		// i is the number of files
 		MergeData * mergeData = (MergeData *) malloc(sizeof(MergeData));
 
@@ -144,8 +165,8 @@ int main(int argc, char *argv[]) {
 				pthread_mutex_lock(&mutex);
 				strcpy(mergeData->outpath, "./bboyisverysexy420yoloswag69/");
 				strcpy(mergeData->column, column);
-				strcpy(mergeData->file1, filePaths[j*size]);
-				strcpy(mergeData->file2, filePaths[(j+1)*size]);
+				strcpy(mergeData->file1, filePaths[j]);
+				strcpy(mergeData->file2, filePaths[(j+1)]);
 				mergeData->filenum = j;
 				pthread_mutex_unlock(&mutex);
 				pthread_mutex_lock(&mutex);
@@ -186,8 +207,11 @@ int main(int argc, char *argv[]) {
 		//3 or fewer files left
 		if(i==1){
 			//there was only 1 csv file found
-			//rename to final name, delete /tmp/ or whatever the folder's called
-			//place in outpath location
+			char * output = (char *)malloc(sizeof(sorted) + sizeof(outpath) + 12);
+			strcpy(output, outpath);
+			strcat(output, "/AllFiles");
+			strcat(output, sorted);
+			rename(filePaths[0], output);
 		}
 		else if(i==2){
 			pthread_mutex_lock(&mutex);
