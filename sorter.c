@@ -103,11 +103,16 @@ int main(int argc, char *argv[]) {
 	int endLength = 0;	//length of "-sorted-<whatever>.csv"
 	int numFiles = 0;
 
+	strcpy(sorted, "-sorted-");
+	strcat(sorted, column);
+	strcat(sorted, ".csv");
+	endLength = strlen(sorted);
+
 	if(countDir){
 		while((fileForCounting = readdir(countDir)) != NULL){
-			if(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0);
+			if(strcmp(fileForCounting->d_name,".") == 0 || strcmp(fileForCounting->d_name,"..") == 0);
 			else {
-				nameEnd = currentFile->d_name;
+				nameEnd = fileForCounting->d_name;
 				nameLength = strlen(nameEnd);
 				if (nameLength > endLength){
 					nameEnd = nameEnd + (nameLength - endLength);
@@ -119,15 +124,12 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	pthread_t tid[numFiles];	
+
 	char filePaths[numFiles][512];
 	char * filePath;
 	i = 0;
 
-	strcpy(sorted, "-sorted-");
-	strcat(sorted, column);
-	strcat(sorted, ".csv");
-
-	endLength = strlen(sorted);
 	if (dir) {
 		while ((currentFile = readdir(dir)) != NULL) {
 			if(strcmp(currentFile->d_name,".") == 0 || strcmp(currentFile->d_name,"..") == 0);
@@ -149,13 +151,11 @@ int main(int argc, char *argv[]) {
 
 		int j;
 
-		// i is the number of files
-		pthread_t tid[i];
 		MergeData * mergeData;
 		int f = 0;
 
 		while(i>3){
-			for(j = 0; j < (i/2) ; j++) {
+			for(j = 0; j < i ; j=j+2) {
 				pthread_mutex_lock(&mutex2);
 				mergeData = (MergeData *) malloc(sizeof(MergeData));
 				strcpy(mergeData->outpath, "./bboyisverysexy420yoloswag69/");
@@ -283,7 +283,6 @@ int main(int argc, char *argv[]) {
 
 
 	free(sorted);
-
 
 	printf("and %lu\n\n", thread);
 	pthread_mutex_lock(&mutex);

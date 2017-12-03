@@ -65,12 +65,11 @@ void merge(Line* movies, Line* L, int l, Line* R, int r, char* col) {
 }
 
 void * mergeTwoFiles(void * data) {
+	pthread_mutex_lock(&mutex2);
 	char outpath[256];
 	char column[32];
 	char file1path[256];
-	char file2path[256];
-
-	pthread_mutex_lock(&mutex2);
+	char file2path[256];	
 	MergeData * input = (MergeData *) data;
 	int filenum = input->filenum;
 

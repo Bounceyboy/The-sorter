@@ -85,7 +85,8 @@ void *csvSearch(void * data){
 		free(sorted);
 		if(newpath != NULL)
 			free(newpath);
-		free(newData);	
+		if(newData != NULL)
+			free(newData);	
 		closedir(dir);				
 		return;
 	}

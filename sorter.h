@@ -102,7 +102,7 @@ Line* importLine (char* buf){
 		commaPointer = strstr(buf, ",,");		
 	}
 
-//	printf("%s\n", buf);
+	//printf("%s\n", buf);
 
 	Line *toReturn;
 	toReturn = malloc(sizeof(Line));
