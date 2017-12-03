@@ -74,7 +74,17 @@ This time, instead of making the program multiprocessed, it had to be multithrea
 essentially the same task. Instead of outputting the sorted files separately, this time the program 
 will compile all sorted .csv files into one file.
 
+All individually sorted files will go in a temporary folder, to then be scanned and merged into one
+big AllFiles-sorted-column_name.csv.
+
 This program will also accept any ordering of the argv tags. That was fairly easy to implement.
 
 # Issues
 
+We had an issue where we were using the same lock for everything, and there was a deadlock upon retrieval,
+and we didn't know how to fix it other than creating two separate mutex locks and using them to block off
+the different parts of memory that were being accessed. It worked much better after making that change.
+
+We also had an issue where after we stored the path to a sorted file into a struct, then passed it to a
+merge files function, and unpacked the struct so that the data can be used locally within the function,
+the data was corrupted.
