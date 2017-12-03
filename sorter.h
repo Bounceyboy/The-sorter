@@ -1,6 +1,9 @@
 #ifndef sorter_h
 #define sorter_h
 
+static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t mutex2 = PTHREAD_MUTEX_INITIALIZER;
+
 //Line struct stores the data of each line of the CSV input file.
 typedef struct{					//I used typedef so we can reference just "Line" instead 
 						//of "struct line" every time

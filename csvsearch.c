@@ -6,8 +6,6 @@ void *csvSearch(void * data){
 	char * column = input->column;
 	int * threadCount = input->threadCount;
 
-	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-
 	DIR * dir = opendir(path);
 	struct dirent* currentFile;
 	char* nameEnd = "abcdefghijk"; 	//changed to 11 chars to check "-sorted.csv"
@@ -36,9 +34,11 @@ void *csvSearch(void * data){
 				strcat(newpath, "/");
 				strcat(newpath, currentFile->d_name);
 
+				pthread_mutex_lock(&mutex2);
 				strcpy(newData->path, newpath);
 				strcpy(newData->column, column);
 				newData->threadCount = threadCount;
+				pthread_mutex_unlock(&mutex2);
 				//check if file is directory
 				DIR * dir2 = opendir(newpath);
 				if(dir2){
@@ -47,6 +47,7 @@ void *csvSearch(void * data){
 						pthread_mutex_lock(&mutex);
 						(*threadCount)++;
 						pthread_mutex_unlock(&mutex);
+						pthread_join(tid[0],NULL);
 					}
 				}
 				closedir(dir2);
@@ -63,9 +64,11 @@ void *csvSearch(void * data){
 				else
 					nameEnd = nameEnd - 4;		//moves nameEnd to last 4 chars (case 2)
 				if(strcmp(nameEnd, ".csv")==0){
+					pthread_mutex_lock(&mutex2);
 					strcpy(newData->path, newpath);
 					strcpy(newData->column, column);
 					newData->threadCount = threadCount;
+					pthread_mutex_unlock(&mutex2);
 
 					if (pthread_create(&tid[1], NULL, csvSort, newData) == 0){
 						printf("%lu, ", tid[1]);
@@ -73,7 +76,6 @@ void *csvSearch(void * data){
 						pthread_mutex_lock(&mutex);
 						(*threadCount)++;
 						pthread_mutex_unlock(&mutex);						
-						//might be faster to remove this as well?
 						pthread_join(tid[1], NULL);
 					}
 				}
@@ -92,10 +94,12 @@ void *csvSearch(void * data){
 
 void *csvSort(void * data) {
 	//unpack Data struct
+	pthread_mutex_lock(&mutex2);
 	Data *input = (Data *) data;
 
 	char * pathToFile = input->path;
 	char * column = input->column;
+	pthread_mutex_unlock(&mutex2);
 
 	FILE * toCount = fopen(pathToFile, "r");
 	int numberOfLines = line_count(toCount);

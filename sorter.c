@@ -17,6 +17,9 @@ int main(int argc, char *argv[]) {
 	char* column = NULL;
 	int i = 1;
 
+	static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+	static pthread_mutex_t mutex2 = PTHREAD_MUTEX_INITIALIZER;
+
 	//user input handling
 	while ((i + 1)< argc) {
 		if (strcmp(argv[i], "-c") == 0 && ((strcmp(argv[i+1],"-o") != 0) && (strcmp(argv[i+1],"-d") != 0))){
@@ -72,7 +75,6 @@ int main(int argc, char *argv[]) {
     int x = 1;
     data->threadCount = &x;
 
-	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
     printf("Initial TID: %lu\n\n", pthread_self());
     printf("TIDs of all child threads: ");
@@ -154,14 +156,14 @@ int main(int argc, char *argv[]) {
 
 		while(i>3){
 			for(j = 0; j < (i/2) ; j++) {
-				pthread_mutex_lock(&mutex);
+				pthread_mutex_lock(&mutex2);
 				strcpy(mergeData->outpath, "./bboyisverysexy420yoloswag69/");
 				strcpy(mergeData->column, column);
 				strcpy(mergeData->file1, filePaths[j]);
 				strcpy(mergeData->file2, filePaths[j+1]);
 
 				mergeData->filenum = j;
-				pthread_mutex_unlock(&mutex);
+				pthread_mutex_unlock(&mutex2);
 				pthread_mutex_lock(&mutex);
 				(*(data->threadCount))++;
 				pthread_mutex_unlock(&mutex);
@@ -217,24 +219,24 @@ int main(int argc, char *argv[]) {
 			//printf("PogChamp\n");
 		}
 		else if(i==2){
-			pthread_mutex_lock(&mutex);
+			pthread_mutex_lock(&mutex2);
 			strcpy(mergeData->outpath, outpath);
 			strcpy(mergeData->column, column);
 			strcpy(mergeData->file1, filePaths[0]);
 			strcpy(mergeData->file2, filePaths[1]);
-			pthread_mutex_unlock(&mutex);
+			pthread_mutex_unlock(&mutex2);
 			pthread_mutex_lock(&mutex);
 			(*(data->threadCount))++;
 			pthread_mutex_unlock(&mutex);
 			mergeTwoFiles(mergeData);
 		}
 		else if(i==3){
-			pthread_mutex_lock(&mutex);
+			pthread_mutex_lock(&mutex2);
 			strcpy(mergeData->outpath, "./bboyisverysexy420yoloswag69/");
 			strcpy(mergeData->column, column);
 			strcpy(mergeData->file1, filePaths[0]);
 			strcpy(mergeData->file2, filePaths[1]);
-			pthread_mutex_unlock(&mutex);
+			pthread_mutex_unlock(&mutex2);
 			pthread_mutex_lock(&mutex);
 			(*(data->threadCount))++;
 			pthread_mutex_unlock(&mutex);
@@ -261,12 +263,12 @@ int main(int argc, char *argv[]) {
 				}
 			}
 
-			pthread_mutex_lock(&mutex);
+			pthread_mutex_lock(&mutex2);
 			strcpy(mergeData->outpath, outpath);
 			strcpy(mergeData->column, column);
 			strcpy(mergeData->file1, filePaths[0]);
 			strcpy(mergeData->file2, filePaths[1]);
-			pthread_mutex_unlock(&mutex);
+			pthread_mutex_unlock(&mutex2);
 			pthread_mutex_lock(&mutex);
 			(*(data->threadCount))++;
 			pthread_mutex_unlock(&mutex);

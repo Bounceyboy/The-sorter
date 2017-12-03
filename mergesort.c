@@ -65,9 +65,8 @@ void merge(Line* movies, Line* L, int l, Line* R, int r, char* col) {
 }
 
 void * mergeTwoFiles(void * data) {
-	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-	pthread_mutex_lock(&mutex);
+	pthread_mutex_lock(&mutex2);
 	MergeData * input = (MergeData *) data;
 
 	char outpath[256];
@@ -80,7 +79,7 @@ void * mergeTwoFiles(void * data) {
 	strcpy(column, input->column);
 	strcpy(file1path, input->file1);
 	strcpy(file2path, input->file2);
-	pthread_mutex_unlock(&mutex);
+	pthread_mutex_unlock(&mutex2);
 
 	FILE * file1 = fopen(file1path, "r");
 	FILE * file2 = fopen(file2path, "r");
