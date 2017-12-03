@@ -151,24 +151,28 @@ int main(int argc, char *argv[]) {
 
 		// i is the number of files
 		pthread_t tid[i];
-		MergeData * mergeData = (MergeData *) malloc(sizeof(MergeData));
+		MergeData * mergeData;
 		int f = 0;
 
 		while(i>3){
 			for(j = 0; j < (i/2) ; j++) {
 				pthread_mutex_lock(&mutex2);
+				mergeData = (MergeData *) malloc(sizeof(MergeData));
 				strcpy(mergeData->outpath, "./bboyisverysexy420yoloswag69/");
 				strcpy(mergeData->column, column);
 				strcpy(mergeData->file1, filePaths[j]);
 				strcpy(mergeData->file2, filePaths[j+1]);
+				pthread_mutex_unlock(&mutex2);
 
 				mergeData->filenum = j;
-				pthread_mutex_unlock(&mutex2);
+				pthread_create(&tid[f+j], NULL, mergeTwoFiles, mergeData);
+				printf("%lu, ", thread);
 				pthread_mutex_lock(&mutex);
 				(*(data->threadCount))++;
 				pthread_mutex_unlock(&mutex);
-				pthread_create(&tid[f+j], NULL, mergeTwoFiles, mergeData);
-				printf("%lu, ", thread);
+				pthread_mutex_lock(&mutex2);
+				free(mergeData);
+				pthread_mutex_unlock(&mutex2);
 			}
  
 			if(i%2 == 1){
