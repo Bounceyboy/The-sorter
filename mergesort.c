@@ -64,73 +64,50 @@ void merge(Line* movies, Line* L, int l, Line* R, int r, char* col) {
 		movies[k++] = R[j++];
 }
 
-void * mergeTwoFiles(void * data) {
+void * appendFile(void * data) {
 	pthread_mutex_lock(&mutex2);
-	char outpath[256];
 	char column[32];
-	char file1path[256];
-	char file2path[256];	
-	MergeData * input = (MergeData *) data;
-	int filenum = input->filenum;
+	char path[256];	
+	Data * input = (Data *) data;
 
-	strcpy(outpath, input->outpath);
 	strcpy(column, input->column);
-	strcpy(file1path, input->file1);
-	strcpy(file2path, input->file2);
+	strcpy(path, input->path);
 	pthread_mutex_unlock(&mutex2);
 
-	FILE * f1count = fopen(file1path, "r");
-	FILE * f2count = fopen(file2path, "r");
+	FILE * count = fopen(path, "r");
+	int lines = line_count(count);
+	fclose(count);
 
-	//multithread this
-	int numLines1 = line_count(f1count);
-	fclose(f1count);
-	int numLines2 = line_count(f2count);
-	fclose(f2count);
-
+	if (lines < 2)
+		return;
 	
 	char* sorted = (char*)malloc(sizeof(column) + 13);
 	strcpy(sorted, "-sorted-");
 	strcat(sorted, column);
 	strcat(sorted, ".csv");
 
-	char outfile[128];
-	if (strcmp(outpath, "./bboyisverysexy420yoloswag69/") == 0)
-		sprintf(outfile, "./bboyisverysexy420yoloswag69/temp%d%s", filenum, sorted);
-	else
-		sprintf(outfile, "%sAllFiles%s", outpath, sorted);
+
+	char outfile[256];
+	sprintf(outfile, "./AllFiles.csv");
 	free(sorted);
 
-	FILE * file1 = fopen(file1path, "r");
-	FILE * file2 = fopen(file2path, "r");
-	mkdir(outpath, 0755);
-	FILE * result = fopen(outfile, "w");
+	FILE * file = fopen(path, "r");	
+	FILE * result = fopen(outfile, "a");
 
-	char buf1[1024];
-	char buf2[1024];
+	char buf[1024];
+	fgets(buf,1024,file);
+	fprintf(result, "%s", buf); //store header
 
-	//get headers
-	fgets(buf1,1024,file1);
-	fgets(buf2,1024,file2);
-
-	//compare headers
-	if(strcmp(buf1, buf2))
-		return;	// not the same header, can't combine
-	fprintf(result, "%s", buf1); //store header
-
-	while (fgets(buf1, 1024, file1) != NULL){
-		fprintf(result, "%s", buf1);
+	if(file == NULL) {
+		perror("Error opening file.");
 	}
-
-	while (fgets(buf2, 1024, file2) != NULL){
-		fprintf(result, "%s", buf2);
+	else {
+		while(fgets(buf, sizeof(1024), file)) {
+			fprintf(result, "%s", buf);
+		}
 	}
-
 	
-	fclose(file1);
-	fclose(file2);
-	remove(file1path);
-	remove(file2path);
+	fclose(file);
 	fclose(result);
 	return;
 

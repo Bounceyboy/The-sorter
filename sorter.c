@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 			strcpy(path, "./");
 			strcat(path, argv[i+1]);
 		} else if (strcmp(argv[i], "-o") == 0 && ((strcmp(argv[i+1],"-d") != 0) && (strcmp(argv[i+1],"-c") != 0))) {
-			outpath = (char*)malloc((sizeof(char)*strlen(argv[i+1]) + 64));
+			outpath = (char*)malloc((sizeof(char)*strlen(argv[i+1]) + 192));
 			strcpy(outpath, "./");
 			strcat(outpath, argv[i+1]);
 		}
@@ -75,15 +75,32 @@ int main(int argc, char *argv[]) {
     int x = 1;
     data->threadCount = &x;
 
-
+    printf("Initial PID: %d\n\n", getpid());
     printf("Initial TID: %lu\n\n", pthread_self());
     printf("TIDs of all child threads: ");
 	pthread_create(&thread, NULL, csvSearch, data);
 
 	printf("%lu, ", thread);
 
-	void * pv;
-	pthread_join(thread, &pv);
+	pthread_join(thread, NULL);
+
+	SortData * sort = malloc(sizeof(SortData));
+
+	strcpy(sort->outpath, outpath);
+	strcpy(sort->column, column);
+	strcpy(sort->file, "./AllFiles.csv");
+
+	pthread_create(&thread, NULL, csvSort, sort);
+
+	printf("and %lu\n\n", thread);
+	pthread_join(thread, NULL);
+	pthread_mutex_lock(&mutex);
+	(*(data->threadCount))++;
+	printf("Total number of threads: %d\n", *(data->threadCount));
+	pthread_mutex_unlock(&mutex);
+	free(data);
+	remove("./AllFiles.csv");
+	return 0;
 
 
 	//q: still need to multithread this?
@@ -93,7 +110,7 @@ int main(int argc, char *argv[]) {
 	//mergeFiles
 
 	//stores file paths into filePaths[][]
-	DIR * dir = opendir("./bboyisverysexy420yoloswag69/");
+	/*DIR * dir = opendir("./bboyisverysexy420yoloswag69/");
 	DIR * countDir = opendir("./bboyisverysexy420yoloswag69/");
 	struct dirent* fileForCounting;
 	struct dirent* currentFile;
@@ -290,5 +307,5 @@ int main(int argc, char *argv[]) {
 	printf("Total number of threads: %d\n", *(data->threadCount));
 	pthread_mutex_unlock(&mutex);
 	free(data);
-	return 0;
+	return 0;*/
 }

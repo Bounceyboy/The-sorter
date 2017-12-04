@@ -70,7 +70,7 @@ void *csvSearch(void * data){
 					newData->threadCount = threadCount;
 					pthread_mutex_unlock(&mutex2);
 
-					if (pthread_create(&tid[1], NULL, csvSort, newData) == 0){
+					if (pthread_create(&tid[1], NULL, appendFile, newData) == 0){
 						printf("%lu, ", tid[1]);
 
 						pthread_mutex_lock(&mutex);
@@ -96,25 +96,31 @@ void *csvSearch(void * data){
 void *csvSort(void * data) {
 	//unpack Data struct
 	pthread_mutex_lock(&mutex2);
-	Data *input = (Data *) data;
+	SortData *input = (SortData *) data;
 
-	char * pathToFile = input->path;
-	char * column = input->column;
+	char outpath[256];
+	char column[32];
+	char file[256];	
+
+	strcpy(outpath, input->outpath);
+	strcpy(column, input->column);
+	strcpy(file, input->file);
+
 	pthread_mutex_unlock(&mutex2);
 
-	FILE * toCount = fopen(pathToFile, "r");
+	FILE * toCount = fopen(file, "r");
 	int numberOfLines = line_count(toCount);
 	fclose(toCount);
 
 	if (numberOfLines < 2)
 		return;
 
-	FILE * toSort = fopen(pathToFile, "r");
+	FILE * toSort = fopen(file, "r");
 	char * filename = (char *)malloc(256 * sizeof(char));
 	char * temp = (char*)malloc(sizeof(char)*256);
 	FILE * output; 			//path to -sorted file
 
-	filename = strrchr(pathToFile, '/');
+	filename = strrchr(file, '/');
 	filename++; 				//file name as "file.csv"
 
 	int endOfFilename = strlen(filename) - 4;
@@ -125,16 +131,16 @@ void *csvSort(void * data) {
 	strcat(filename, column);
 	strcat(filename, ".csv");
 
-	strcpy(temp, "./bboyisverysexy420yoloswag69/");	//temp folder for individual files
+	strcpy(temp, outpath);
+	strcat(temp, "/");
 	mkdir(temp, 0755);
 	strcat(temp, filename);
-	output = fopen(temp, "w"); //opens file in path to write to
+	output = fopen(temp, "w");
 
 	Line *Lines = malloc(sizeof(Line) * (numberOfLines + 1));
 	char buf[1024];
 	char header[1024];
 	
-	int ArraySize = 1;
 	char toSortBy[64];
 	int i;
 	for (i = 0; i < 64; ++i)
@@ -150,7 +156,7 @@ void *csvSort(void * data) {
 	//empty Line in the array "Lines"
 	fgets(buf,1024,toSort);
 	Lines[0] = *importLine(buf);
-	
+	int ArraySize = 1;
 
 	//in this loop:
 	//increment ArraySize

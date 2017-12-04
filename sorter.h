@@ -46,10 +46,8 @@ typedef struct {
 typedef struct {
 	char outpath[256];
 	char column[32];
-	char file1[256];
-	char file2[256];
-	int filenum;
-} MergeData;
+	char file[256];
+} SortData;
 
 
 //prototypes
@@ -63,7 +61,7 @@ char* getStrElement(Line *line, char* col);
 void *csvSearch(void * data);	//path, column
 void *csvSort(void * data);		//path, column
 int line_count(FILE *n);
-void * mergeTwoFiles(void * data);
+void * appendFile(void * data);
 
 //functions
 
