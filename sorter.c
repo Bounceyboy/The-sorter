@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
 				pthread_mutex_unlock(&mutex2);
 			}
  
-			if(i%2 == 1){
+			if((i%2) == 1){
 				i = i/2;
 				i++;
 			}

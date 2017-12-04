@@ -79,11 +79,16 @@ void * mergeTwoFiles(void * data) {
 	strcpy(file2path, input->file2);
 	pthread_mutex_unlock(&mutex2);
 
-	FILE * file1 = fopen(file1path, "r");
-	FILE * file2 = fopen(file2path, "r");
 	FILE * f1count = fopen(file1path, "r");
 	FILE * f2count = fopen(file2path, "r");
 
+	//multithread this
+	int numLines1 = line_count(f1count);
+	fclose(f1count);
+	int numLines2 = line_count(f2count);
+	fclose(f2count);
+
+	
 	char* sorted = (char*)malloc(sizeof(column) + 13);
 	strcpy(sorted, "-sorted-");
 	strcat(sorted, column);
@@ -93,18 +98,43 @@ void * mergeTwoFiles(void * data) {
 	if (strcmp(outpath, "./bboyisverysexy420yoloswag69/") == 0)
 		sprintf(outfile, "./bboyisverysexy420yoloswag69/temp%d%s", filenum, sorted);
 	else
-		sprintf(outfile, "%sAllFiles", outpath, sorted);
+		sprintf(outfile, "%sAllFiles%s", outpath, sorted);
 	free(sorted);
 
+	FILE * file1 = fopen(file1path, "r");
+	FILE * file2 = fopen(file2path, "r");
+	mkdir(outpath, 0755);
 	FILE * result = fopen(outfile, "w");
 
-	//multithread this
-	int numLines1 = line_count(f1count);
-	fclose(f1count);
-	int numLines2 = line_count(f2count);
-	fclose(f2count);
+	char buf1[1024];
+	char buf2[1024];
 
-	Line *f1Line = (Line*)malloc(sizeof(Line));
+	//get headers
+	fgets(buf1,1024,file1);
+	fgets(buf2,1024,file2);
+
+	//compare headers
+	if(strcmp(buf1, buf2))
+		return;	// not the same header, can't combine
+	fprintf(result, "%s", buf1); //store header
+
+	while (fgets(buf1, 1024, file1) != NULL){
+		fprintf(result, "%s", buf1);
+	}
+
+	while (fgets(buf2, 1024, file2) != NULL){
+		fprintf(result, "%s", buf2);
+	}
+
+	
+	fclose(file1);
+	fclose(file2);
+	remove(file1path);
+	remove(file2path);
+	fclose(result);
+	return;
+
+	/*Line *f1Line = (Line*)malloc(sizeof(Line));
 	Line *f2Line = (Line*)malloc(sizeof(Line));
 
 	char buf1[1024];
@@ -232,7 +262,7 @@ void * mergeTwoFiles(void * data) {
 	free(f1Line);
 	free(f2Line);
 
-	return;
+	return;*/
 }
 
 int getIntElement(Line *line, char* col) {

@@ -111,19 +111,11 @@ void *csvSort(void * data) {
 
 	FILE * toSort = fopen(pathToFile, "r");
 	char * filename = (char *)malloc(256 * sizeof(char));
-	char * path = (char*)malloc(sizeof(char)*256); //directory where file is stored
 	char * temp = (char*)malloc(sizeof(char)*256);
 	FILE * output; 			//path to -sorted file
 
-	strcpy(path, pathToFile); 	//path is direct path to file in this line
 	filename = strrchr(pathToFile, '/');
 	filename++; 				//file name as "file.csv"
-
-
-	//don't think we need this anymore but saving just in case
-	// int endOfPath = (strlen(path) - strlen(filename));
-	// strncpy(path, path, endOfPath);
-	// path[endOfPath] = '\0'; //path without filename at end
 
 	int endOfFilename = strlen(filename) - 4;
 	strncpy(filename, filename, endOfFilename);
@@ -137,8 +129,6 @@ void *csvSort(void * data) {
 	mkdir(temp, 0755);
 	strcat(temp, filename);
 	output = fopen(temp, "w"); //opens file in path to write to
-
-
 
 	Line *Lines = malloc(sizeof(Line) * (numberOfLines + 1));
 	char buf[1024];
@@ -174,7 +164,7 @@ void *csvSort(void * data) {
 
 	int x;
 	fprintf(output, "%s", header);
-	for(x=1;x<ArraySize;x++){
+	for(x=0;x<ArraySize;x++){
 
 		fprintf(output, "%s,",(&Lines[x])->color);
 		fprintf(output, "%s,",(&Lines[x])->director_name);
@@ -211,7 +201,7 @@ void *csvSort(void * data) {
 	}
 
 	free(Lines);
-	free(path);
+	free(temp);
 	fclose(output);
 	fclose(toSort);
 	return;
